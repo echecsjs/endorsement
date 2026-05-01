@@ -27,7 +27,6 @@
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.1",
     "tsdown": "^0.21.4",
-    "typedoc": "^0.28.17",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.57.0",
     "vitest": "^4.1.0"
@@ -35,46 +34,17 @@
   "engines": {
     "node": ">=20"
   },
-  "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "types": "./dist/index.d.mts"
-    }
-  },
-  "files": [
-    "/dist/",
-    "LICENSE",
-    "README.md",
-    "CHANGELOG.md"
-  ],
   "homepage": "https://github.com/echecsjs/endorsement#readme",
-  "keywords": [
-    "chess",
-    "dutch",
-    "endorsement",
-    "fide",
-    "fpc",
-    "pairing",
-    "rtg",
-    "swiss",
-    "tournament",
-    "trf",
-    "typescript",
-    "validation"
-  ],
   "license": "MIT",
   "name": "@echecs/endorsement",
   "packageManager": "pnpm@10.33.0",
-  "publishConfig": {
-    "access": "public"
-  },
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/echecsjs/endorsement.git"
   },
   "scripts": {
     "build": "tsdown",
-    "docs": "typedoc",
     "format": "pnpm run format:ci --write",
     "format:ci": "prettier -l \"**/*.+(css|js|json|jsx|md|mjs|mts|ts|tsx|yml|yaml)\"",
     "lint": "pnpm run lint:style && pnpm run lint:types",
@@ -86,8 +56,5 @@
     "test:coverage": "pnpm run test --coverage",
     "test:watch": "pnpm run test --watch"
   },
-  "sideEffects": false,
-  "type": "module",
-  "types": "dist/index.d.mts",
-  "version": "0.1.0"
+  "type": "module"
 }
