@@ -7,9 +7,9 @@
     "url": "https://github.com/echecsjs/endorsement/issues"
   },
   "dependencies": {
-    "@echecs/swiss": "link:../swiss",
-    "@echecs/tournament": "link:../tournament",
-    "@echecs/trf": "link:../trf"
+    "@echecs/swiss": "^3.1.0",
+    "@echecs/tournament": "^2.1.2",
+    "@echecs/trf": "^3.4.0"
   },
   "description": "CLI tools for FIDE Swiss Software Endorsement (C.04.A). Free Pairings Checker and Random Tournament Generator for validating @echecs/swiss.",
   "devDependencies": {
