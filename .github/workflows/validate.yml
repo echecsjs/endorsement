@@ -1,0 +1,46 @@
+name: 🏁 Validate
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      seeds:
+        description: 'Number of seeds to test'
+        default: '50'
+
+jobs:
+  validate:
+    name: 🏁 Cross-validate against bbpPairings
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v4
+        with:
+          cache: pnpm
+          node-version: node
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔨 Build
+        run: pnpm build
+
+      - name: 📦 Download bbpPairings
+        run: |
+          curl -sL https://github.com/BieremaBoyzProgramming/bbpPairings/releases/download/v6.0.0/bbpPairings-v6.0.0-x86_64-pc-linux.tar.gz | tar xz
+          chmod +x bbpPairings-v6.0.0/bbpPairings.exe
+
+      - name: 🏁 bbpPairings generates, we check
+        run: ./scripts/check-bbp.sh ${{ inputs.seeds || '50' }} bbpPairings-v6.0.0/bbpPairings.exe
+
+      - name: 🏁 We generate, bbpPairings checks
+        run: ./scripts/check-ours.sh ${{ inputs.seeds || '50' }} bbpPairings-v6.0.0/bbpPairings.exe
