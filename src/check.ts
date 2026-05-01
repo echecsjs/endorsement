@@ -45,15 +45,13 @@ function trfToSwiss(raw: string): TournamentData | undefined {
       }
 
       if (result.opponentId === null) {
-        const byeMap: Record<
-          string,
-          { kind: GameKind; result: 0 | 0.5 | 1 }
-        > = {
-          F: { kind: 'full-bye', result: 1 },
-          H: { kind: 'half-bye', result: 0.5 },
-          U: { kind: 'pairing-bye', result: 1 },
-          Z: { kind: 'zero-bye', result: 0 },
-        };
+        const byeMap: Record<string, { kind: GameKind; result: 0 | 0.5 | 1 }> =
+          {
+            F: { kind: 'full-bye', result: 1 },
+            H: { kind: 'half-bye', result: 0.5 },
+            U: { kind: 'pairing-bye', result: 1 },
+            Z: { kind: 'zero-bye', result: 0 },
+          };
         const bye = byeMap[result.result];
         if (bye) {
           roundGames.push({
