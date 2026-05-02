@@ -13,6 +13,7 @@ N="${1:-50}"
 BBP="${2:-/tmp/bbpPairings/build/bbpPairings.exe}"
 CLI="node dist/cli.mjs"
 TMP_DIR=$(mktemp -d)
+START_SEED=$(date +%s)
 
 if [ ! -x "$BBP" ]; then
   echo "error: bbpPairings not found at $BBP" >&2
@@ -34,6 +35,9 @@ configs=(
 )
 config_count=${#configs[@]}
 
+echo "start seed: $START_SEED"
+echo ""
+
 total_rounds=0
 perfect_rounds=0
 total_pairings=0
@@ -41,16 +45,22 @@ total_matching=0
 failures=0
 crashes=0
 
-for seed in $(seq 1 "$N"); do
+for i in $(seq 0 $((N - 1))); do
+  seed=$((START_SEED + i))
   trf_path="$TMP_DIR/rtg_$seed.trf"
   config_path="$TMP_DIR/rtg_$seed.cfg"
 
   # rotate through configs
-  config_idx=$(( (seed - 1) % config_count ))
-  printf '%b\n' "${configs[$config_idx]}" > "$config_path"
+  config_idx=$((i % config_count))
+  config="${configs[$config_idx]}"
+  printf '%b\n' "$config" > "$config_path"
+
+  cfg_players=$(printf '%b' "$config" | sed -n 's/PlayersNumber=\([0-9]*\)/\1/p')
+  cfg_rounds=$(printf '%b' "$config" | sed -n 's/RoundsNumber=\([0-9]*\)/\1/p')
+  cfg_label="${cfg_players}p/${cfg_rounds}r"
 
   if ! "$BBP" --dutch -g "$config_path" -o "$trf_path" -s "$seed" >/dev/null 2>&1; then
-    echo "seed $seed: bbpPairings RTG failed"
+    echo "seed $seed ($cfg_label): bbpPairings RTG failed"
     crashes=$((crashes + 1))
     rm -f "$config_path"
     continue
@@ -62,7 +72,7 @@ for seed in $(seq 1 "$N"); do
   # parse the summary line: "result: X/Y rounds perfect, A/B pairings match (Z%)"
   summary=$(echo "$output" | grep "^result:")
   if [ -z "$summary" ]; then
-    echo "seed $seed: parse failed"
+    echo "seed $seed ($cfg_label): parse failed"
     crashes=$((crashes + 1))
     rm -f "$trf_path"
     continue
@@ -79,9 +89,9 @@ for seed in $(seq 1 "$N"); do
   total_matching=$((total_matching + pairs_matching))
 
   if [ "$rounds_perfect" = "$rounds_total" ]; then
-    echo "seed $seed: $rounds_total rounds perfect ($pairs_total pairings)"
+    echo "seed $seed ($cfg_label): $rounds_total rounds perfect ($pairs_total pairings)"
   else
-    echo "seed $seed: $rounds_perfect/$rounds_total rounds ($pairs_matching/$pairs_total pairings)"
+    echo "seed $seed ($cfg_label): $rounds_perfect/$rounds_total rounds ($pairs_matching/$pairs_total pairings)"
     failures=$((failures + 1))
   fi
 
@@ -91,7 +101,7 @@ done
 rmdir "$TMP_DIR" 2>/dev/null || true
 
 echo ""
-echo "=== bbpPairings RTG -> our FPC: $N seeds ==="
+echo "=== bbpPairings RTG -> our FPC: $N seeds (start: $START_SEED) ==="
 echo "crashes:  $crashes"
 echo "rounds:   $perfect_rounds/$total_rounds perfect"
 echo "pairings: $total_matching/$total_pairings"
