@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #
 # generates N tournaments with bbpPairings RTG, checks each with our FPC.
+# bbpPairings decides tournament sizes (its RTG defaults).
 #
 # usage: ./scripts/check-bbp.sh [count] [bbp-path]
 #   count    — number of seeds to test (default: 50)
@@ -18,16 +19,6 @@ if [ ! -x "$BBP" ]; then
   exit 2
 fi
 
-# bbpPairings RTG config — vary tournament size per seed
-configs=(
-  "PlayersNumber=40\nRoundsNumber=9"
-  "PlayersNumber=60\nRoundsNumber=11"
-  "PlayersNumber=80\nRoundsNumber=9"
-  "PlayersNumber=20\nRoundsNumber=7"
-  "PlayersNumber=100\nRoundsNumber=13"
-)
-config_count=${#configs[@]}
-
 total_rounds=0
 perfect_rounds=0
 total_pairings=0
@@ -37,20 +28,13 @@ crashes=0
 
 for seed in $(seq 1 "$N"); do
   trf_path="$TMP_DIR/rtg_$seed.trf"
-  config_path="$TMP_DIR/rtg_$seed.cfg"
 
-  # rotate through configs
-  config_idx=$(( (seed - 1) % config_count ))
-  printf '%b\n' "${configs[$config_idx]}" > "$config_path"
-
-  if ! "$BBP" --dutch -g "$config_path" -o "$trf_path" -s "$seed" >/dev/null 2>&1; then
+  if ! "$BBP" --dutch -g -o "$trf_path" -s "$seed" >/dev/null 2>&1; then
     echo "seed $seed: bbpPairings RTG failed"
     crashes=$((crashes + 1))
-    rm -f "$config_path"
     continue
   fi
 
-  rm -f "$config_path"
   output=$($CLI check "$trf_path" 2>&1) || true
 
   # parse the summary line: "result: X/Y rounds perfect, A/B pairings match (Z%)"
