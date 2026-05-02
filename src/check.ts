@@ -249,6 +249,13 @@ function check(trfContent: string, options?: CheckOptions): CheckResult {
       ]),
     );
 
+    // index actual pairings by player for reverse lookup
+    const actualByPlayer = new Map<string, [string, string]>();
+    for (const p of result.pairings) {
+      actualByPlayer.set(p.white, [p.white, p.black]);
+      actualByPlayer.set(p.black, [p.white, p.black]);
+    }
+
     const discrepancies: {
       actual: [string, string] | undefined;
       expected: [string, string];
@@ -260,8 +267,12 @@ function check(trfContent: string, options?: CheckOptions): CheckResult {
       if (actualMap.has(key)) {
         matching++;
       } else {
+        // find what our engine paired the white player with instead
+        const actualPair =
+          actualByPlayer.get(expectedPair[0]) ??
+          actualByPlayer.get(expectedPair[1]);
         discrepancies.push({
-          actual: undefined,
+          actual: actualPair,
           expected: expectedPair,
         });
       }
