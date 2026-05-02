@@ -48,8 +48,17 @@ jobs:
         run: ./scripts/check-bbp.sh ${{ inputs.seeds || '100' }} /tmp/bbpPairings/bbpPairings.exe
         env:
           SEED_OFFSET: ${{ matrix.batch }}
+          FAILURES_DIR: ${{ github.workspace }}/failures
 
       - name: 🏁 We generate, bbpPairings checks
         run: ./scripts/check-ours.sh ${{ inputs.seeds || '100' }} /tmp/bbpPairings/bbpPairings.exe
         env:
           SEED_OFFSET: ${{ matrix.batch }}
+
+      - name: 📦 Upload failing TRFs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failures-batch-${{ matrix.batch }}
+          path: failures/
+          if-no-files-found: ignore

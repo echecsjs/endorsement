@@ -90,12 +90,17 @@ for i in $(seq 0 $((N - 1))); do
 
   if [ "$rounds_perfect" = "$rounds_total" ]; then
     echo "seed $seed ($cfg_label): $rounds_total rounds perfect ($pairs_total pairings)"
+    rm -f "$trf_path"
   else
     echo "seed $seed ($cfg_label): $rounds_perfect/$rounds_total rounds ($pairs_matching/$pairs_total pairings)"
     failures=$((failures + 1))
+    # keep failing TRFs for investigation
+    if [ -n "${FAILURES_DIR:-}" ]; then
+      mkdir -p "$FAILURES_DIR"
+      cp "$trf_path" "$FAILURES_DIR/bbp_seed_${seed}_${cfg_label}.trf"
+    fi
+    rm -f "$trf_path"
   fi
-
-  rm -f "$trf_path"
 done
 
 rmdir "$TMP_DIR" 2>/dev/null || true
