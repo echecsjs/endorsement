@@ -18,6 +18,16 @@ if [ ! -x "$BBP" ]; then
   exit 2
 fi
 
+# bbpPairings RTG config — vary tournament size per seed
+configs=(
+  "PlayersNumber=40\nRoundsNumber=9"
+  "PlayersNumber=60\nRoundsNumber=11"
+  "PlayersNumber=80\nRoundsNumber=9"
+  "PlayersNumber=20\nRoundsNumber=7"
+  "PlayersNumber=100\nRoundsNumber=13"
+)
+config_count=${#configs[@]}
+
 total_rounds=0
 perfect_rounds=0
 total_pairings=0
@@ -27,13 +37,20 @@ crashes=0
 
 for seed in $(seq 1 "$N"); do
   trf_path="$TMP_DIR/rtg_$seed.trf"
+  config_path="$TMP_DIR/rtg_$seed.cfg"
 
-  if ! "$BBP" --dutch -g -o "$trf_path" -s "$seed" >/dev/null 2>&1; then
+  # rotate through configs
+  config_idx=$(( (seed - 1) % config_count ))
+  printf '%b\n' "${configs[$config_idx]}" > "$config_path"
+
+  if ! "$BBP" --dutch -g "$config_path" -o "$trf_path" -s "$seed" >/dev/null 2>&1; then
     echo "seed $seed: bbpPairings RTG failed"
     crashes=$((crashes + 1))
+    rm -f "$config_path"
     continue
   fi
 
+  rm -f "$config_path"
   output=$($CLI check "$trf_path" 2>&1) || true
 
   # parse the summary line: "result: X/Y rounds perfect, A/B pairings match (Z%)"
@@ -56,7 +73,7 @@ for seed in $(seq 1 "$N"); do
   total_matching=$((total_matching + pairs_matching))
 
   if [ "$rounds_perfect" = "$rounds_total" ]; then
-    echo "seed $seed: $rounds_total rounds perfect"
+    echo "seed $seed: $rounds_total rounds perfect ($pairs_total pairings)"
   else
     echo "seed $seed: $rounds_perfect/$rounds_total rounds ($pairs_matching/$pairs_total pairings)"
     failures=$((failures + 1))
