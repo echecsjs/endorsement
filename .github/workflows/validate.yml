@@ -8,13 +8,17 @@ on:
   workflow_dispatch:
     inputs:
       seeds:
-        description: 'Number of seeds to test'
-        default: '50'
+        description: 'Number of seeds per job'
+        default: '100'
 
 jobs:
   validate:
-    name: 🏁 Cross-validate against bbpPairings
+    name: 🏁 Validate (${{ matrix.batch }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        batch: [1, 2, 3, 4, 5]
     steps:
       - name: ⬇️ Checkout code
         uses: actions/checkout@v4
@@ -41,7 +45,7 @@ jobs:
           chmod +x /tmp/bbpPairings/bbpPairings.exe
 
       - name: 🏁 bbpPairings generates, we check
-        run: ./scripts/check-bbp.sh ${{ inputs.seeds || '50' }} /tmp/bbpPairings/bbpPairings.exe
+        run: ./scripts/check-bbp.sh ${{ inputs.seeds || '100' }} /tmp/bbpPairings/bbpPairings.exe
 
       - name: 🏁 We generate, bbpPairings checks
-        run: ./scripts/check-ours.sh ${{ inputs.seeds || '50' }} /tmp/bbpPairings/bbpPairings.exe
+        run: ./scripts/check-ours.sh ${{ inputs.seeds || '100' }} /tmp/bbpPairings/bbpPairings.exe
