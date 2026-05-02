@@ -47,13 +47,10 @@ jobs:
       - name: 🏁 bbpPairings generates, we check
         run: ./scripts/check-bbp.sh ${{ inputs.seeds || '100' }} /tmp/bbpPairings/bbpPairings.exe
         env:
-          SEED_OFFSET: ${{ matrix.batch }}
           FAILURES_DIR: ${{ github.workspace }}/failures
 
       - name: 🏁 We generate, bbpPairings checks
         run: ./scripts/check-ours.sh ${{ inputs.seeds || '100' }} /tmp/bbpPairings/bbpPairings.exe
-        env:
-          SEED_OFFSET: ${{ matrix.batch }}
 
       - name: 📦 Upload failing TRFs
         if: always()

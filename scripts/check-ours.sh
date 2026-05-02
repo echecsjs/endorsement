@@ -12,7 +12,7 @@ N="${1:-50}"
 BBP="${2:-/tmp/bbpPairings/build/bbpPairings.exe}"
 CLI="node dist/cli.mjs"
 TMP_DIR=$(mktemp -d)
-START_SEED=$(( $(date +%s) + ${SEED_OFFSET:-0} * ${N} ))
+START_SEED=$(( RANDOM * 32768 + RANDOM ))
 
 if [ ! -x "$BBP" ]; then
   echo "error: bbpPairings not found at $BBP" >&2
