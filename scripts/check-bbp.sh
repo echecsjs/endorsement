@@ -97,7 +97,7 @@ for i in $(seq 0 $((N - 1))); do
     # keep failing TRFs for investigation
     if [ -n "${FAILURES_DIR:-}" ]; then
       mkdir -p "$FAILURES_DIR"
-      cp "$trf_path" "$FAILURES_DIR/bbp_seed_${seed}_${cfg_label}.trf"
+      cp "$trf_path" "$FAILURES_DIR/bbp_seed_${seed}_${cfg_players}p_${cfg_rounds}r.trf"
     fi
     rm -f "$trf_path"
   fi
