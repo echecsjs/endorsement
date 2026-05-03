@@ -7,7 +7,7 @@
     "url": "https://github.com/echecsjs/endorsement/issues"
   },
   "dependencies": {
-    "@echecs/swiss": "^3.1.0",
+    "@echecs/swiss": "^3.1.2",
     "@echecs/tournament": "^2.1.2",
     "@echecs/trf": "^3.4.0"
   },
