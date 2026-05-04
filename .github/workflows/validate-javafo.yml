@@ -1,0 +1,60 @@
+name: 🏁 Validate (JaVaFo)
+
+on:
+  workflow_dispatch:
+    inputs:
+      seeds:
+        description: 'Number of seeds per job'
+        default: '100'
+
+jobs:
+  validate:
+    name: 🏁 JaVaFo (${{ matrix.batch }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        batch: [1, 2, 3, 4, 5]
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v4
+        with:
+          cache: pnpm
+          node-version: node
+
+      - name: ☕ Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔨 Build
+        run: pnpm build
+
+      - name: 📦 Download JaVaFo
+        run: curl -sL -o /tmp/javafo.jar http://www.rrweb.org/javafo/current/javafo.jar
+
+      - name: 🏁 JaVaFo generates, we check
+        run: ./scripts/check-javafo.sh ${{ inputs.seeds || '100' }} /tmp/javafo.jar
+        env:
+          FAILURES_DIR: ${{ github.workspace }}/failures
+
+      - name: 🏁 We generate, JaVaFo checks
+        run: ./scripts/check-ours-javafo.sh ${{ inputs.seeds || '100' }} /tmp/javafo.jar
+
+      - name: 📦 Upload failing TRFs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: javafo-failures-batch-${{ matrix.batch }}
+          path: failures/
+          if-no-files-found: ignore
