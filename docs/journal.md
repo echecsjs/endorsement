@@ -4,9 +4,58 @@ Process diary for FIDE Swiss Software Endorsement of `@echecs/swiss`.
 
 ---
 
+## 2026-05-04
+
+### FIDE endorsement test — 0 discrepancies
+
+bumped `@echecs/swiss` to 3.1.3 and re-ran the full 5000-seed FIDE endorsement
+test.
+[run 25338104140](https://github.com/echecsjs/endorsement/actions/runs/25338104140)
+
+**bbpPairings generates, we check:**
+
+- 54000/54000 rounds perfect (100%)
+- 1934728/1934728 pairings match (100%)
+- 0 discrepancies
+
+**we generate, bbpPairings checks:**
+
+- 5000/5000 accepted (100%)
+
+zero discrepancies across 5000 random tournaments (20-120 players, 7-15 rounds,
+~1.9 million pairings). FIDE allows up to 10 — we have 0.
+
+### swiss fixes that got us here
+
+the original run (swiss 3.1.0) had 14 discrepancies across 5000 seeds. three
+fixes in `@echecs/swiss` resolved all of them:
+
+- **3.1.1** — use absolute color imbalance in C11 edge weight computation.
+  fixed 5/14 cases where two players with the same strong color preference were
+  paired together, forcing one to violate their preference when an alternative
+  matching existed that satisfied both.
+- **3.1.2** — zero-bye should not assign downfloat. fixed 8/9 remaining cases
+  where zero-byes were incorrectly given `FLOAT_DOWN`, inflating C14-C17 float
+  history bits in edge weights and making the blossom prefer pairings that
+  bbpPairings correctly avoided.
+- **3.1.3** — bye assignment fix. fixed the last case where our engine assigned
+  the pairing-bye to a different player than bbpPairings, cascading into 3
+  different pairings.
+
+all 14 previously-failing TRF files (saved as CI artifacts) now produce 100%
+match.
+
+### remaining work
+
+- VCL19 compliance audit — 19 items still marked `unknown`
+- FE-1 application form
+- 2026 Congress date not yet announced — submission must be 4 months before
+
+---
+
 ## 2026-05-02
 
-### FIDE endorsement test — 5000 seeds
+### FIDE endorsement test — 5000 seeds (first run)
 
 ran the full FIDE endorsement test (5000 seeds, 50 parallel jobs of 100 each)
 via `fide-test.yml` workflow.
