@@ -45,12 +45,16 @@ jobs:
           chmod +x /tmp/bbpPairings/bbpPairings.exe
 
       - name: 🏁 bbpPairings generates, we check
-        run: ./scripts/check-bbp.sh ${{ inputs.seeds || '100' }} /tmp/bbpPairings/bbpPairings.exe
+        run:
+          ./scripts/check-bbp.sh ${{ inputs.seeds || '100' }}
+          /tmp/bbpPairings/bbpPairings.exe
         env:
           FAILURES_DIR: ${{ github.workspace }}/failures
 
       - name: 🏁 We generate, bbpPairings checks
-        run: ./scripts/check-ours.sh ${{ inputs.seeds || '100' }} /tmp/bbpPairings/bbpPairings.exe
+        run:
+          ./scripts/check-ours.sh ${{ inputs.seeds || '100' }}
+          /tmp/bbpPairings/bbpPairings.exe
 
       - name: 📦 Upload failing TRFs
         if: always()
