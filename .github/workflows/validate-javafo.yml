@@ -41,15 +41,20 @@ jobs:
         run: pnpm build
 
       - name: 📦 Download JaVaFo
-        run: curl -sL -o /tmp/javafo.jar http://www.rrweb.org/javafo/current/javafo.jar
+        run:
+          curl -sL -o /tmp/javafo.jar
+          http://www.rrweb.org/javafo/current/javafo.jar
 
       - name: 🏁 JaVaFo generates, we check
-        run: ./scripts/check-javafo.sh ${{ inputs.seeds || '100' }} /tmp/javafo.jar
+        run:
+          ./scripts/check-javafo.sh ${{ inputs.seeds || '100' }} /tmp/javafo.jar
         env:
           FAILURES_DIR: ${{ github.workspace }}/failures
 
       - name: 🏁 We generate, JaVaFo checks
-        run: ./scripts/check-ours-javafo.sh ${{ inputs.seeds || '100' }} /tmp/javafo.jar
+        run:
+          ./scripts/check-ours-javafo.sh ${{ inputs.seeds || '100' }}
+          /tmp/javafo.jar
 
       - name: 📦 Upload failing TRFs
         if: always()

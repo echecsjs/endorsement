@@ -30,10 +30,10 @@ zero discrepancies across 5000 random tournaments (20-120 players, 7-15 rounds,
 the original run (swiss 3.1.0) had 14 discrepancies across 5000 seeds. three
 fixes in `@echecs/swiss` resolved all of them:
 
-- **3.1.1** — use absolute color imbalance in C11 edge weight computation.
-  fixed 5/14 cases where two players with the same strong color preference were
-  paired together, forcing one to violate their preference when an alternative
-  matching existed that satisfied both.
+- **3.1.1** — use absolute color imbalance in C11 edge weight computation. fixed
+  5/14 cases where two players with the same strong color preference were paired
+  together, forcing one to violate their preference when an alternative matching
+  existed that satisfied both.
 - **3.1.2** — zero-bye should not assign downfloat. fixed 8/9 remaining cases
   where zero-byes were incorrectly given `FLOAT_DOWN`, inflating C14-C17 float
   history bits in edge weights and making the blossom prefer pairings that
@@ -106,8 +106,8 @@ from bracket resolution order and exchange selection. FIDE C.04.A A.7 type 3
   (50 parallel jobs of 100 seeds)
 - bbpPairings v6.0.0 release binary always generates 5-round tournaments on
   linux — switched to building from source
-- bbpPairings RTG defaults produce fixed 5-round tournaments on CI regardless
-  of build — solved by passing explicit config files with
+- bbpPairings RTG defaults produce fixed 5-round tournaments on CI regardless of
+  build — solved by passing explicit config files with
   `PlayersNumber`/`RoundsNumber` to vary tournament sizes (20-120 players, 7-15
   rounds, 10 configurations rotating)
 - marked package as `"private": true` — not publishing to npm, this is a CLI
