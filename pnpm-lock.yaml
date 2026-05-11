@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@echecs/swiss':
-        specifier: ^3.1.3
-        version: 3.1.3(@echecs/tournament@2.1.2)
+        specifier: ^4.0.0
+        version: 4.0.0(@echecs/tournament@3.1.0)
       '@echecs/tournament':
-        specifier: ^2.1.2
-        version: 2.1.2
+        specifier: ^3.1.0
+        version: 3.1.0
       '@echecs/trf':
         specifier: ^3.4.0
         version: 3.4.0
@@ -114,15 +114,15 @@ packages:
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
 
-  '@echecs/swiss@3.1.3':
-    resolution: {integrity: sha512-vTBsrdSEPktEqUQRCdKU3GfXBXLIyVcRA11JSIS+iQAb8y8rh3NrGQrMN2r41JN3XaTJosPXjJyzCiEP4S40xA==}
-    engines: {node: '>=20'}
+  '@echecs/swiss@4.0.0':
+    resolution: {integrity: sha512-F7gdMieKwOoedJxe4Iw00dW8y8w6zVq4EJK9WNlNmaCFn84F4o8cCBzZEF2ipBXYyG2yGRdjE2ElBDn6nbFCUg==}
+    engines: {node: '>=22'}
     peerDependencies:
-      '@echecs/tournament': ^2.0.0
+      '@echecs/tournament': ^3.0.0
 
-  '@echecs/tournament@2.1.2':
-    resolution: {integrity: sha512-DYq8Nbc1Dq15ZpQMKWziGmfyxd4RC0jIgWsbVRLM6/q+sPKPjSPxiBtRC8+u5gPr0lKaK5eoZKs295I/W60akA==}
-    engines: {node: '>=20'}
+  '@echecs/tournament@3.1.0':
+    resolution: {integrity: sha512-eXc0BMjpimolwpcPnuzEClyFZ90TnN2nLEJLJ7UCr4oFCstjI2lUbABnLE7HsKUYg+j7QadgtTR2J+wcflDlwg==}
+    engines: {node: '>=22'}
 
   '@echecs/trf@3.4.0':
     resolution: {integrity: sha512-JEhN16qTjU8xZpDzKaILRpn/8BldqaYKiY9qhXcyr3mMYeuk65LAbiCPDDpO9Oe+2TQiNjP3HQfidObUnyuk1w==}
@@ -1699,11 +1699,11 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@echecs/swiss@3.1.3(@echecs/tournament@2.1.2)':
+  '@echecs/swiss@4.0.0(@echecs/tournament@3.1.0)':
     dependencies:
-      '@echecs/tournament': 2.1.2
+      '@echecs/tournament': 3.1.0
 
-  '@echecs/tournament@2.1.2': {}
+  '@echecs/tournament@3.1.0': {}
 
   '@echecs/trf@3.4.0': {}
 
