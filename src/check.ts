@@ -7,10 +7,10 @@ import type {
   RoundReport,
   TournamentData,
 } from './types.js';
-import type { Game, GameKind, Player } from '@echecs/swiss';
+import type { Bye, CompletedRound, Game, Player } from '@echecs/swiss';
 
 /**
- * Converts a parsed TRF tournament into the Player[] + Game[][] structure
+ * Converts a parsed TRF tournament into the Player[] + CompletedRound[] structure
  * that pair() expects. Handles bye classification (F/H/Z/U), forfeits,
  * and double forfeits.
  */
@@ -22,6 +22,8 @@ function trfToSwiss(raw: string): TournamentData | undefined {
 
   const players: Player[] = tournament.players.map((p) => ({
     id: String(p.pairingNumber),
+    points: 0,
+    rank: 0,
     rating: p.rating,
   }));
 
@@ -34,31 +36,31 @@ function trfToSwiss(raw: string): TournamentData | undefined {
     }
   }
 
-  const roundArrays: Game[][] = Array.from({ length: maxRound }, () => []);
+  const roundArrays: CompletedRound[] = Array.from(
+    { length: maxRound },
+    () => ({ byes: [], games: [] }),
+  );
 
   for (const player of tournament.players) {
     for (const result of player.results) {
       const ri = result.round - 1;
-      const roundGames = roundArrays[ri];
-      if (!roundGames) {
+      const round = roundArrays[ri];
+      if (!round) {
         continue;
       }
 
       if (result.opponentId === null) {
-        const byeMap: Record<string, { kind: GameKind; result: 0 | 0.5 | 1 }> =
-          {
-            F: { kind: 'full-bye', result: 1 },
-            H: { kind: 'half-bye', result: 0.5 },
-            U: { kind: 'pairing-bye', result: 1 },
-            Z: { kind: 'zero-bye', result: 0 },
-          };
-        const bye = byeMap[result.result];
-        if (bye) {
-          roundGames.push({
-            black: '',
-            kind: bye.kind,
-            result: bye.result,
-            white: String(player.pairingNumber),
+        const byeKindMap: Record<string, Bye['kind']> = {
+          F: 'full',
+          H: 'half',
+          U: 'pairing',
+          Z: 'zero',
+        };
+        const byeKind = byeKindMap[result.result];
+        if (byeKind) {
+          round.byes.push({
+            kind: byeKind,
+            player: String(player.pairingNumber),
           });
         }
         continue;
@@ -68,20 +70,20 @@ function trfToSwiss(raw: string): TournamentData | undefined {
         continue;
       }
 
-      let score: 0 | 0.5 | 1;
+      let gameResult: Game['result'];
       switch (result.result) {
         case '1':
         case '+': {
-          score = 1;
+          gameResult = 'white';
           break;
         }
         case '0':
         case '-': {
-          score = 0;
+          gameResult = 'black';
           break;
         }
         case '=': {
-          score = 0.5;
+          gameResult = 'draw';
           break;
         }
         default: {
@@ -89,25 +91,24 @@ function trfToSwiss(raw: string): TournamentData | undefined {
         }
       }
 
-      const game: Game = {
-        black: String(result.opponentId),
-        result: score,
-        white: String(player.pairingNumber),
-      };
+      const white = String(player.pairingNumber);
+      const black = String(result.opponentId);
 
       if (result.result === '+') {
-        game.kind = 'forfeit-win';
+        round.games.push({ black, forfeit: 'black', result: 'white', white });
       } else if (result.result === '-') {
-        const opponentResults = tournament.players
+        const opponentResult = tournament.players
           .find((p) => p.pairingNumber === result.opponentId)
           ?.results.find((r) => r.round === result.round);
-        if (opponentResults?.result === '-') {
-          continue;
+        if (opponentResult?.result === '-') {
+          // double forfeit
+          round.games.push({ black, forfeit: 'both', result: 'none', white });
+        } else {
+          round.games.push({ black, forfeit: 'white', result: 'black', white });
         }
-        game.kind = 'forfeit-loss';
+      } else {
+        round.games.push({ black, result: gameResult, white });
       }
-
-      roundGames.push(game);
     }
   }
 
@@ -243,7 +244,7 @@ function check(trfContent: string, options?: CheckOptions): CheckResult {
       expectedPairs.map(([w, b]) => [w, b].toSorted().join('-')),
     );
     const actualMap = new Map(
-      result.pairings.map((p) => [
+      result.games.map((p) => [
         [p.white, p.black].toSorted().join('-'),
         [p.white, p.black] as [string, string],
       ]),
@@ -251,7 +252,7 @@ function check(trfContent: string, options?: CheckOptions): CheckResult {
 
     // index actual pairings by player for reverse lookup
     const actualByPlayer = new Map<string, [string, string]>();
-    for (const p of result.pairings) {
+    for (const p of result.games) {
       actualByPlayer.set(p.white, [p.white, p.black]);
       actualByPlayer.set(p.black, [p.white, p.black]);
     }

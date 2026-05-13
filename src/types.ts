@@ -1,4 +1,4 @@
-import type { Game, Player } from '@echecs/swiss';
+import type { CompletedRound, Player } from '@echecs/swiss';
 
 interface CheckOptions {
   rounds?: number[];
@@ -35,7 +35,7 @@ interface RoundReport {
 }
 
 interface TournamentData {
-  games: Game[][];
+  games: CompletedRound[];
   players: Player[];
   totalRounds: number;
 }

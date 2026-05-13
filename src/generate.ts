@@ -5,7 +5,7 @@ import { createPrng } from './prng.js';
 import { fideExpectedScore, simulateResult } from './probability.js';
 
 import type { GenerateOptions } from './types.js';
-import type { Game, Player } from '@echecs/swiss';
+import type { CompletedRound, Player } from '@echecs/swiss';
 import type { Tournament } from '@echecs/trf';
 
 /**
@@ -20,6 +20,21 @@ function randomRating(random: () => number): number {
     Math.cos(2 * Math.PI * u2);
   const rating = Math.round(1700 + 400 * normal);
   return Math.max(1000, Math.min(2800, rating));
+}
+
+/**
+ * Maps a numeric simulateResult return value (0, 0.5, 1) to a string game result.
+ */
+function numericToResult(value: 0 | 0.5 | 1): 'black' | 'draw' | 'white' {
+  if (value === 1) {
+    return 'white';
+  }
+
+  if (value === 0.5) {
+    return 'draw';
+  }
+
+  return 'black';
 }
 
 /**
@@ -40,20 +55,22 @@ function generate(options: GenerateOptions): string {
   // Generate players
   const players: Player[] = Array.from({ length: playerCount }, (_, index) => ({
     id: String(index + 1),
+    points: 0,
+    rank: 0,
     rating: randomRating(random),
   }));
 
   // Simulate rounds
-  const allGames: Game[][] = [];
+  const allRounds: CompletedRound[] = [];
 
   for (let round = 0; round < roundCount; round++) {
-    const result = pair(players, allGames, {
+    const result = pair(players, allRounds, {
       expectedRounds: roundCount,
     });
 
-    const roundGames: Game[] = [];
+    const completedRound: CompletedRound = { byes: [], games: [] };
 
-    for (const pairing of result.pairings) {
+    for (const pairing of result.games) {
       const whitePlayer = players.find((p) => p.id === pairing.white);
       const blackPlayer = players.find((p) => p.id === pairing.black);
       const whiteRating = whitePlayer?.rating ?? 1700;
@@ -62,9 +79,10 @@ function generate(options: GenerateOptions): string {
       const expectedWhite =
         diff >= 0 ? fideExpectedScore(diff) : 1 - fideExpectedScore(-diff);
 
-      const gameResult = simulateResult(expectedWhite, random);
+      const numericResult = simulateResult(expectedWhite, random);
+      const gameResult = numericToResult(numericResult);
 
-      roundGames.push({
+      completedRound.games.push({
         black: pairing.black,
         result: gameResult,
         white: pairing.white,
@@ -73,19 +91,17 @@ function generate(options: GenerateOptions): string {
 
     // Add byes
     for (const bye of result.byes) {
-      roundGames.push({
-        black: '',
-        kind: 'pairing-bye',
-        result: 1,
-        white: bye.player,
+      completedRound.byes.push({
+        kind: 'pairing',
+        player: bye.player,
       });
     }
 
-    allGames.push(roundGames);
+    allRounds.push(completedRound);
   }
 
   // Build TRF tournament
-  const tournament = buildTrfTournament(players, allGames, roundCount, seed);
+  const tournament = buildTrfTournament(players, allRounds, roundCount, seed);
 
   return stringify(tournament);
 }
@@ -96,7 +112,7 @@ function generate(options: GenerateOptions): string {
  */
 function buildTrfTournament(
   players: Player[],
-  allGames: Game[][],
+  allRounds: CompletedRound[],
   roundCount: number,
   seed: number,
 ): Tournament {
@@ -114,39 +130,49 @@ function buildTrfTournament(
     playerResults.set(p.id, []);
   }
 
-  for (const [roundIndex, games] of allGames.entries()) {
+  for (const [roundIndex, completedRound] of allRounds.entries()) {
     const round = roundIndex + 1;
-    if (!games) {
-      continue;
+
+    // Handle pairing byes
+    for (const bye of completedRound.byes) {
+      const results = playerResults.get(bye.player);
+      if (results) {
+        results.push({
+          color: '-',
+          // eslint-disable-next-line unicorn/no-null -- TRF RoundResult requires null for byes
+          opponentId: null,
+          result: 'U',
+          round,
+        });
+      }
+      const score = playerScores.get(bye.player) ?? 0;
+      playerScores.set(bye.player, score + 1);
     }
 
-    for (const game of games) {
-      if (game.kind === 'pairing-bye') {
-        const results = playerResults.get(game.white);
-        if (results) {
-          results.push({
-            color: '-',
-            // eslint-disable-next-line unicorn/no-null -- TRF RoundResult requires null for byes
-            opponentId: null,
-            result: 'U',
-            round,
-          });
-        }
-        const score = playerScores.get(game.white) ?? 0;
-        playerScores.set(game.white, score + 1);
-        continue;
-      }
-
+    for (const game of completedRound.games) {
       // White result
       const whiteResults = playerResults.get(game.white);
       if (whiteResults) {
         let resultCode: '+' | '-' | '0' | '1' | '=';
-        if (game.result === 1) {
-          resultCode = game.kind === 'forfeit-win' ? '+' : '1';
-        } else if (game.result === 0) {
-          resultCode = game.kind === 'forfeit-loss' ? '-' : '0';
-        } else {
+        switch (game.result) {
+        case 'white': {
+          resultCode = 'forfeit' in game && game.forfeit === 'black' ? '+' : '1';
+        
+        break;
+        }
+        case 'black': {
+          resultCode = 'forfeit' in game && game.forfeit === 'white' ? '-' : '0';
+        
+        break;
+        }
+        case 'none': {
+          resultCode = '-';
+        
+        break;
+        }
+        default: {
           resultCode = '=';
+        }
         }
         whiteResults.push({
           color: 'w',
@@ -155,20 +181,39 @@ function buildTrfTournament(
           round,
         });
       }
-      const whiteScore = playerScores.get(game.white) ?? 0;
-      playerScores.set(game.white, whiteScore + game.result);
+
+      // Score for white
+      if (game.result === 'white') {
+        const whiteScore = playerScores.get(game.white) ?? 0;
+        playerScores.set(game.white, whiteScore + 1);
+      } else if (game.result === 'draw') {
+        const whiteScore = playerScores.get(game.white) ?? 0;
+        playerScores.set(game.white, whiteScore + 0.5);
+      }
 
       // Black result
       const blackResults = playerResults.get(game.black);
       if (blackResults) {
-        const blackResult = 1 - game.result;
         let resultCode: '+' | '-' | '0' | '1' | '=';
-        if (blackResult === 1) {
-          resultCode = game.kind === 'forfeit-loss' ? '+' : '1';
-        } else if (blackResult === 0) {
-          resultCode = game.kind === 'forfeit-win' ? '-' : '0';
-        } else {
+        switch (game.result) {
+        case 'black': {
+          resultCode = 'forfeit' in game && game.forfeit === 'white' ? '+' : '1';
+        
+        break;
+        }
+        case 'white': {
+          resultCode = 'forfeit' in game && game.forfeit === 'black' ? '-' : '0';
+        
+        break;
+        }
+        case 'none': {
+          resultCode = '-';
+        
+        break;
+        }
+        default: {
           resultCode = '=';
+        }
         }
         blackResults.push({
           color: 'b',
@@ -177,8 +222,15 @@ function buildTrfTournament(
           round,
         });
       }
-      const blackScore = playerScores.get(game.black) ?? 0;
-      playerScores.set(game.black, blackScore + (1 - game.result));
+
+      // Score for black
+      if (game.result === 'black') {
+        const blackScore = playerScores.get(game.black) ?? 0;
+        playerScores.set(game.black, blackScore + 1);
+      } else if (game.result === 'draw') {
+        const blackScore = playerScores.get(game.black) ?? 0;
+        playerScores.set(game.black, blackScore + 0.5);
+      }
     }
   }
 
