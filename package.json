@@ -13,6 +13,13 @@
   },
   "description": "CLI tools for FIDE Swiss Software Endorsement (C.04.A). Free Pairings Checker and Random Tournament Generator for validating @echecs/swiss.",
   "devDependencies": {
+    "@echecs/average-rating": "^4.0.0",
+    "@echecs/buchholz": "^4.0.0",
+    "@echecs/direct-encounter": "^4.0.0",
+    "@echecs/koya": "^4.0.0",
+    "@echecs/number-of-wins": "^4.0.0",
+    "@echecs/progressive": "^4.0.0",
+    "@echecs/sonneborn-berger": "^4.0.0",
     "@eslint/js": "^10.0.1",
     "@types/node": "^25.9.1",
     "@typescript-eslint/parser": "^8.59.4",
