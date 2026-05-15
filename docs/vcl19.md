@@ -39,9 +39,8 @@ ecosystem. Based on
 | 14  | forfeit results (1F-0F etc.)            | pass   | forfeits and double forfeits, `vcl13-14-results.spec.ts` |
 | 15  | adjourned/postponed games               | pass   | Tournament.correct() supports updates, `vcl15-adjourned.spec.ts` |
 | 16  | pairing-allocated bye value             | pass   | configurable via ScoringSystem, `vcl16-17-byes.spec.ts` |
-| 17  | half/full-point byes + warning          | gap    | half-point works; full-point works but no deprecation warning, `vcl16-17-byes.spec.ts` |
+| 17  | half/full-point byes + warning          | pass   | both supported; deprecation warning emitted for full-point byes (tournament@3.1.1), `vcl16-17-byes.spec.ts` |
 | 18  | FIDE rating list                        | pass   | TRF16 reads ratings, API accepts them, `vcl18-rating-list.spec.ts` |
 | 19  | tie-break systems                       | pass   | 7 systems tested per FIDE Handbook, `vcl19-tiebreaks.spec.ts` |
 
-Items marked `gap` require remediation before full VCL19 compliance. See
-`docs/vcl19-compliance.md` for the full compliance report.
+All 19 items pass. See `docs/vcl19-compliance.md` for the full compliance report.

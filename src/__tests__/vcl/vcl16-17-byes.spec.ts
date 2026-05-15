@@ -105,31 +105,26 @@ describe('VCL.17: half-point and full-point byes', () => {
       rating: 2000 - index * 100,
     }));
 
+    // Use a custom pairing system that returns a full-point bye
+    // to verify the Tournament warning path
+    const fakePairingSystem = () => ({
+      byes: [{ kind: 'full' as const, player: '4' }],
+      games: [{ black: '3', white: '1' }, { black: '4', white: '2' }],
+    });
+
     const tournament = new Tournament(
-      {
-        completedRounds: [
-          {
-            byes: [{ kind: 'full', player: '4' }],
-            games: [{ black: '3', result: 'white', white: '1' }],
-          },
-        ],
-        players: players.map((p) =>
-          p.id === '4'
-            ? { ...p, points: 1 }
-            : p.id === '1'
-              ? { ...p, points: 1 }
-              : p,
-        ),
-        totalRounds: 5,
-      },
+      { completedRounds: [], players, totalRounds: 5 },
       {
         onWarning: (message) => warnings.push(message),
-        pairingSystem: pair,
+        pairingSystem: fakePairingSystem,
       },
     );
 
-    expect(tournament).toBeDefined();
-    // NOTE: warnings.length === 0 reveals a gap — @echecs/tournament does not
-    // currently emit a deprecation warning for full-point byes per FIDE rules
+    tournament.pair();
+
+    expect(warnings.length).toBeGreaterThan(0);
+    expect(
+      warnings.some((w) => /full.point/i.test(w) || /deprecated/i.test(w)),
+    ).toBe(true);
   });
 });

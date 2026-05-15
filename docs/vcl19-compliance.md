@@ -163,10 +163,10 @@
 
 ### VCL.17 — half-point and full-point byes
 
-**Status:** gap
-**Evidence:** test case (partial)
+**Status:** pass
+**Evidence:** test case
 **Test:** `src/__tests__/vcl/vcl16-17-byes.spec.ts` — "half-point byes are supported", "full-point byes trigger a warning"
-**Notes:** half-point byes are supported and score correctly. Full-point byes are functional but `@echecs/tournament` does not emit a deprecation warning when they are used. FIDE rules state full-point byes are deprecated and a conforming implementation should warn. The test "full-point byes trigger a warning" currently fails expectation on the warning — see Known Gaps below.
+**Notes:** half-point byes are supported and score correctly. Full-point byes emit a deprecation warning via the `onWarning` callback (fixed in `@echecs/tournament@3.1.1`).
 
 ---
 
@@ -190,26 +190,14 @@
 
 ---
 
-## Known Gaps
-
-### VCL.17 — full-point bye deprecation warning
-
-**Severity:** minor non-conformance
-**Affected package:** `@echecs/tournament`
-**Description:** when a player is assigned a full-point bye, FIDE C.04.3 states this is a deprecated practice and conforming programs should indicate this to the operator. `@echecs/tournament` accepts full-point byes without emitting any warning.
-**Impact:** operational — tournament directors using full-point byes receive no signal that they are using a deprecated feature.
-**Remediation:** emit a `console.warn` (or structured warning via a callback) when a full-point bye is recorded. The test in `vcl16-17-byes.spec.ts:98` already asserts this behaviour; the implementation needs to catch up.
-
----
-
 ## Summary
 
-| Section | Items | Pass | Gap |
-| ------- | ----- | ---- | --- |
-| A. FIDE Mode | 6 | 6 | 0 |
-| B. Pairing Rules | 4 | 4 | 0 |
-| C. TRF16 | 2 | 2 | 0 |
-| D. Results | 3 | 3 | 0 |
-| E. Byes | 2 | 1 | 1 |
-| F. Ratings and Tie-breaks | 2 | 2 | 0 |
-| **Total** | **19** | **18** | **1** |
+| Section | Items | Pass |
+| ------- | ----- | ---- |
+| A. FIDE Mode | 6 | 6 |
+| B. Pairing Rules | 4 | 4 |
+| C. TRF16 | 2 | 2 |
+| D. Results | 3 | 3 |
+| E. Byes | 2 | 2 |
+| F. Ratings and Tie-breaks | 2 | 2 |
+| **Total** | **19** | **19** |
