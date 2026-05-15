@@ -8,7 +8,7 @@ Based on [C04/Appendix-A, Annex-1](https://www.fide.com/FIDE/handbook/C04Annex1_
 
 - **Name:** Adrian de la Rosa
 - **Country:** Spain
-- **Email:** adrian@delarosab.me
+- **Email:** adrian@echecs.dev
 - **Website:** https://github.com/echecsjs
 
 ## 2. Software
