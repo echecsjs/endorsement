@@ -7,7 +7,7 @@ Based on [C04/Appendix-A, Annex-1](https://www.fide.com/FIDE/handbook/C04Annex1_
 ## 1. Applicant
 
 - **Name:** Adrian de la Rosa
-- **Country:** <!-- fill in -->
+- **Country:** Spain
 - **Email:** adrian@delarosab.me
 - **Website:** https://github.com/echecsjs
 
