@@ -14,7 +14,7 @@
   "description": "CLI tools for FIDE Swiss Software Endorsement (C.04.A). Free Pairings Checker and Random Tournament Generator for validating @echecs/swiss.",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/node": "^25.9.0",
+    "@types/node": "^25.9.1",
     "@typescript-eslint/parser": "^8.59.4",
     "@vitest/coverage-v8": "^4.1.0",
     "@vitest/eslint-plugin": "^1.6.17",
