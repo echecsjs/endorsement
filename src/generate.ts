@@ -125,23 +125,29 @@ function buildTrfTournament(
   for (const round of allRounds) {
     for (const game of round.games) {
       switch (game.result) {
-      case 'white': {
-        playerScores.set(game.white, (playerScores.get(game.white) ?? 0) + 1);
-      
-      break;
-      }
-      case 'black': {
-        playerScores.set(game.black, (playerScores.get(game.black) ?? 0) + 1);
-      
-      break;
-      }
-      case 'draw': {
-        playerScores.set(game.white, (playerScores.get(game.white) ?? 0) + 0.5);
-        playerScores.set(game.black, (playerScores.get(game.black) ?? 0) + 0.5);
-      
-      break;
-      }
-      // No default
+        case 'white': {
+          playerScores.set(game.white, (playerScores.get(game.white) ?? 0) + 1);
+
+          break;
+        }
+        case 'black': {
+          playerScores.set(game.black, (playerScores.get(game.black) ?? 0) + 1);
+
+          break;
+        }
+        case 'draw': {
+          playerScores.set(
+            game.white,
+            (playerScores.get(game.white) ?? 0) + 0.5,
+          );
+          playerScores.set(
+            game.black,
+            (playerScores.get(game.black) ?? 0) + 0.5,
+          );
+
+          break;
+        }
+        // No default
       }
     }
 

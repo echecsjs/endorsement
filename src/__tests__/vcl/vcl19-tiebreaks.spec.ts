@@ -1,5 +1,3 @@
-
-
 import { averageRatingOfOpponents } from '@echecs/average-rating';
 import { buchholz } from '@echecs/buchholz';
 import { directEncounter } from '@echecs/direct-encounter';
@@ -55,7 +53,9 @@ describe('VCL.19: tie-break systems', () => {
 
     it('produces same Buchholz for players 1 and 2 in this tournament', () => {
       // Both played against each other and the same remaining opponents
-      expect(buchholz('1', rounds, players)).toBe(buchholz('2', rounds, players));
+      expect(buchholz('1', rounds, players)).toBe(
+        buchholz('2', rounds, players),
+      );
     });
   });
 

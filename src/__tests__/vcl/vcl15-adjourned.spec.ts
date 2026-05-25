@@ -1,4 +1,3 @@
-
 import { pair } from '@echecs/swiss';
 import { Tournament } from '@echecs/tournament';
 import { describe, expect, it } from 'vitest';

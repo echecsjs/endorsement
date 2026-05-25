@@ -57,9 +57,7 @@ describe('VCL.01-06: FIDE Mode', () => {
       for (let seed = 1; seed <= 10; seed++) {
         const trf = generate({ players: 20, rounds: 7, seed });
         const result = check(trf);
-        expect(result.summary.totalMatching).toBe(
-          result.summary.totalPairings,
-        );
+        expect(result.summary.totalMatching).toBe(result.summary.totalPairings);
       }
     });
   });

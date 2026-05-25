@@ -1,9 +1,16 @@
-
 import { pair } from '@echecs/swiss';
 import { Tournament } from '@echecs/tournament';
 import { describe, expect, it } from 'vitest';
 
 import type { Player } from '@echecs/tournament';
+
+const fakePairingSystem = () => ({
+  byes: [{ kind: 'full' as const, player: '4' }],
+  games: [
+    { black: '3', white: '1' },
+    { black: '4', white: '2' },
+  ],
+});
 
 describe('VCL.16: pairing-allocated bye value', () => {
   it('ScoringSystem allows configuring pairing-allocated bye value', () => {
@@ -107,11 +114,6 @@ describe('VCL.17: half-point and full-point byes', () => {
 
     // Use a custom pairing system that returns a full-point bye
     // to verify the Tournament warning path
-    const fakePairingSystem = () => ({
-      byes: [{ kind: 'full' as const, player: '4' }],
-      games: [{ black: '3', white: '1' }, { black: '4', white: '2' }],
-    });
-
     const tournament = new Tournament(
       { completedRounds: [], players, totalRounds: 5 },
       {

@@ -1,4 +1,3 @@
-
 import { pair } from '@echecs/swiss';
 import { Tournament } from '@echecs/tournament';
 import { describe, expect, it } from 'vitest';
@@ -37,9 +36,11 @@ describe('VCL.09: pairing numbers frozen after round 4', () => {
     // pairing numbers. Satisfies VCL.09 by API design.
     expect(typeof tournament.enter).toBe('function');
     expect(typeof tournament.withdraw).toBe('function');
-    expect((tournament as Record<string, unknown>)['reorder']).toBeUndefined();
     expect(
-      (tournament as Record<string, unknown>)['renumber'],
+      (tournament as unknown as Record<string, unknown>)['reorder'],
+    ).toBeUndefined();
+    expect(
+      (tournament as unknown as Record<string, unknown>)['renumber'],
     ).toBeUndefined();
   });
 });

@@ -1,4 +1,3 @@
-
 import { pair } from '@echecs/swiss';
 import { Tournament, bakuAcceleration } from '@echecs/tournament';
 import { describe, expect, it } from 'vitest';
@@ -14,7 +13,6 @@ const makePlayers = (count: number): Player[] =>
   }));
 
 describe('VCL.10: FIDE acceleration systems (Baku)', () => {
-
   it('bakuAcceleration is available and returns an AccelerationMethod', () => {
     const players = makePlayers(20);
     const acceleration = bakuAcceleration(players);

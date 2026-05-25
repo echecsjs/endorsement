@@ -48,7 +48,9 @@ function extractRoundPairings(raw: string, round: number): [string, string][] {
     return [];
   }
 
-  return completedRound.games.map((game) => [game.white, game.black] as [string, string]);
+  return completedRound.games.map(
+    (game) => [game.white, game.black] as [string, string],
+  );
 }
 
 /**

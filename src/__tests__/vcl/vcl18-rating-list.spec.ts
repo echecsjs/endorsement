@@ -1,7 +1,6 @@
 import { parse } from '@echecs/trf';
 import { describe, expect, it } from 'vitest';
 
-
 import { generate } from '../../generate.js';
 
 describe('VCL.18: FIDE rating list', () => {
