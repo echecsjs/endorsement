@@ -11,7 +11,7 @@ describe('VCL.11: TRF16 import', () => {
 
     expect(tournament).not.toBeNull();
     expect(tournament!.players).toHaveLength(20);
-    expect(tournament!.rounds).toBe(5);
+    expect(tournament!.totalRounds).toBe(5);
   });
 
   it('parses all player fields', () => {
@@ -20,9 +20,9 @@ describe('VCL.11: TRF16 import', () => {
 
     expect(tournament).not.toBeNull();
     for (const player of tournament!.players) {
-      expect(player.pairingNumber).toBeGreaterThan(0);
+      expect(Number(player.id)).toBeGreaterThan(0);
       expect(player.name).toBeTruthy();
-      expect(player.results.length).toBeGreaterThan(0);
+      expect(tournament!.completedRounds.length).toBeGreaterThan(0);
     }
   });
 
@@ -32,16 +32,16 @@ describe('VCL.11: TRF16 import', () => {
 
     expect(tournament).not.toBeNull();
 
-    const resultCodes = new Set<string>();
-    for (const player of tournament!.players) {
-      for (const result of player.results) {
-        resultCodes.add(result.result);
+    const resultValues = new Set<string>();
+    for (const round of tournament!.completedRounds) {
+      for (const game of round.games) {
+        resultValues.add(game.result);
       }
     }
 
-    expect(resultCodes.has('1')).toBe(true);
-    expect(resultCodes.has('0')).toBe(true);
-    expect(resultCodes.has('=')).toBe(true);
+    expect(resultValues.has('white')).toBe(true);
+    expect(resultValues.has('black')).toBe(true);
+    expect(resultValues.has('draw')).toBe(true);
   });
 
   it('returns null for empty input', () => {
@@ -61,13 +61,13 @@ describe('VCL.12: TRF16 export', () => {
 
     expect(reParsed).not.toBeNull();
     expect(reParsed!.players).toHaveLength(tournament!.players.length);
-    expect(reParsed!.rounds).toBe(tournament!.rounds);
+    expect(reParsed!.totalRounds).toBe(tournament!.totalRounds);
 
     for (let index = 0; index < tournament!.players.length; index++) {
       const orig = tournament!.players[index]!;
       const rt = reParsed!.players[index]!;
-      expect(rt.pairingNumber).toBe(orig.pairingNumber);
-      expect(rt.results).toHaveLength(orig.results.length);
+      expect(rt.startingRank).toBe(orig.startingRank);
+      expect(reParsed!.completedRounds).toHaveLength(tournament!.completedRounds.length);
     }
   });
 

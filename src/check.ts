@@ -7,12 +7,11 @@ import type {
   RoundReport,
   TournamentData,
 } from './types.js';
-import type { Bye, CompletedRound, Game, Player } from '@echecs/swiss';
+import type { Player } from '@echecs/swiss';
 
 /**
  * Converts a parsed TRF tournament into the Player[] + CompletedRound[] structure
- * that pair() expects. Handles bye classification (F/H/Z/U), forfeits,
- * and double forfeits.
+ * that pair() expects.
  */
 function trfToSwiss(raw: string): TournamentData | undefined {
   const tournament = parse(raw);
@@ -21,103 +20,22 @@ function trfToSwiss(raw: string): TournamentData | undefined {
   }
 
   const players: Player[] = tournament.players.map((p) => ({
-    id: String(p.pairingNumber),
+    id: p.id,
     points: 0,
     rank: 0,
     rating: p.rating,
   }));
 
-  let maxRound = 0;
-  for (const player of tournament.players) {
-    for (const result of player.results) {
-      if (result.round > maxRound) {
-        maxRound = result.round;
-      }
-    }
-  }
-
-  const roundArrays: CompletedRound[] = Array.from(
-    { length: maxRound },
-    () => ({ byes: [], games: [] }),
-  );
-
-  for (const player of tournament.players) {
-    for (const result of player.results) {
-      const ri = result.round - 1;
-      const round = roundArrays[ri];
-      if (!round) {
-        continue;
-      }
-
-      if (result.opponentId === null) {
-        const byeKindMap: Record<string, Bye['kind']> = {
-          F: 'full',
-          H: 'half',
-          U: 'pairing',
-          Z: 'zero',
-        };
-        const byeKind = byeKindMap[result.result];
-        if (byeKind) {
-          round.byes.push({
-            kind: byeKind,
-            player: String(player.pairingNumber),
-          });
-        }
-        continue;
-      }
-
-      if (result.color !== 'w') {
-        continue;
-      }
-
-      let gameResult: Game['result'];
-      switch (result.result) {
-        case '1':
-        case '+': {
-          gameResult = 'white';
-          break;
-        }
-        case '0':
-        case '-': {
-          gameResult = 'black';
-          break;
-        }
-        case '=': {
-          gameResult = 'draw';
-          break;
-        }
-        default: {
-          continue;
-        }
-      }
-
-      const white = String(player.pairingNumber);
-      const black = String(result.opponentId);
-
-      if (result.result === '+') {
-        round.games.push({ black, forfeit: 'black', result: 'white', white });
-      } else if (result.result === '-') {
-        const opponentResult = tournament.players
-          .find((p) => p.pairingNumber === result.opponentId)
-          ?.results.find((r) => r.round === result.round);
-        if (opponentResult?.result === '-') {
-          // double forfeit
-          round.games.push({ black, forfeit: 'both', result: 'none', white });
-        } else {
-          round.games.push({ black, forfeit: 'white', result: 'black', white });
-        }
-      } else {
-        round.games.push({ black, result: gameResult, white });
-      }
-    }
-  }
-
-  return { games: roundArrays, players, totalRounds: maxRound };
+  return {
+    games: tournament.completedRounds,
+    players,
+    totalRounds: tournament.totalRounds,
+  };
 }
 
 /**
  * Extracts expected pairings for a round from TRF data. Returns [white, black][]
- * pairs excluding byes. Deduplicates via sorted pair keys.
+ * pairs excluding byes.
  */
 function extractRoundPairings(raw: string, round: number): [string, string][] {
   const tournament = parse(raw);
@@ -125,37 +43,17 @@ function extractRoundPairings(raw: string, round: number): [string, string][] {
     return [];
   }
 
-  const pairs: [string, string][] = [];
-  const seen = new Set<string>();
-
-  for (const player of tournament.players) {
-    const result = player.results.find((r) => r.round === round);
-
-    if (!result || result.opponentId === null) {
-      continue;
-    }
-
-    const key = [String(player.pairingNumber), String(result.opponentId)]
-      .toSorted()
-      .join('-');
-    if (seen.has(key)) {
-      continue;
-    }
-    seen.add(key);
-
-    if (result.color === 'w') {
-      pairs.push([String(player.pairingNumber), String(result.opponentId)]);
-    } else {
-      pairs.push([String(result.opponentId), String(player.pairingNumber)]);
-    }
+  const completedRound = tournament.completedRounds[round - 1];
+  if (!completedRound) {
+    return [];
   }
 
-  return pairs;
+  return completedRound.games.map((game) => [game.white, game.black] as [string, string]);
 }
 
 /**
  * Finds players with pre-assigned absences (H/F/Z byes) to exclude from
- * pairing input. U (pairing-bye) is assigned by the algorithm, not pre-assigned.
+ * pairing input. 'pairing' byes are assigned by the algorithm, not pre-assigned.
  */
 function extractAbsentPlayers(raw: string, round: number): Set<string> {
   const tournament = parse(raw);
@@ -163,15 +61,16 @@ function extractAbsentPlayers(raw: string, round: number): Set<string> {
     return new Set();
   }
 
+  const completedRound = tournament.completedRounds[round - 1];
+  if (!completedRound) {
+    return new Set();
+  }
+
   const absent = new Set<string>();
-  for (const player of tournament.players) {
-    const result = player.results.find((r) => r.round === round);
-    if (
-      result &&
-      result.opponentId === null &&
-      (result.result === 'H' || result.result === 'F' || result.result === 'Z')
-    ) {
-      absent.add(String(player.pairingNumber));
+  for (const bye of completedRound.byes) {
+    // Pairing byes ('pairing') are assigned by the algorithm, not pre-assigned
+    if (bye.kind === 'half' || bye.kind === 'full' || bye.kind === 'zero') {
+      absent.add(bye.player);
     }
   }
 

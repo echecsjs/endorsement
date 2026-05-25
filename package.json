@@ -9,7 +9,7 @@
   "dependencies": {
     "@echecs/swiss": "^4.0.0",
     "@echecs/tournament": "^3.1.1",
-    "@echecs/trf": "^3.4.0"
+    "@echecs/trf": "^4.0.0"
   },
   "description": "CLI tools for FIDE Swiss Software Endorsement (C.04.A). Free Pairings Checker and Random Tournament Generator for validating @echecs/swiss.",
   "devDependencies": {

@@ -107,15 +107,15 @@ describe('VCL.14: forfeit results', () => {
     }
   });
 
-  it('TRF parses forfeit result codes correctly', () => {
+  it('TRF parses game results correctly', () => {
     const trfContent = generate({ players: 20, rounds: 5, seed: 42 });
     const tournament = parse(trfContent);
     expect(tournament).not.toBeNull();
 
-    const validCodes = new Set(['+', '-', '0', '1', '=', 'D', 'F', 'H', 'L', 'U', 'W', 'Z']);
-    for (const player of tournament!.players) {
-      for (const result of player.results) {
-        expect(validCodes.has(result.result)).toBe(true);
+    const validResults = new Set(['white', 'black', 'draw', 'none']);
+    for (const round of tournament!.completedRounds) {
+      for (const game of round.games) {
+        expect(validResults.has(game.result)).toBe(true);
       }
     }
   });

@@ -6,7 +6,7 @@ import { fideExpectedScore, simulateResult } from './probability.js';
 
 import type { GenerateOptions } from './types.js';
 import type { CompletedRound, Player } from '@echecs/swiss';
-import type { Tournament } from '@echecs/trf';
+import type { TournamentData, Player as TournamentPlayer } from '@echecs/trf';
 
 /**
  * Generates a random rating from a normal distribution centered around 1700,
@@ -43,7 +43,7 @@ function numericToResult(value: 0 | 0.5 | 1): 'black' | 'draw' | 'white' {
  * 1. Seed a PRNG (deterministic when seed provided)
  * 2. Generate player pool with random ratings
  * 3. For each round: call pair(), assign results via FIDE probability table
- * 4. Build a Tournament object compatible with @echecs/trf stringify
+ * 4. Build a TournamentData object compatible with @echecs/trf stringify
  * 5. Return TRF16 string
  */
 function generate(options: GenerateOptions): string {
@@ -107,7 +107,7 @@ function generate(options: GenerateOptions): string {
 }
 
 /**
- * Converts the internal player/game representation into a Tournament object
+ * Converts the internal player/game representation into a TournamentData object
  * that @echecs/trf can stringify.
  */
 function buildTrfTournament(
@@ -115,132 +115,49 @@ function buildTrfTournament(
   allRounds: CompletedRound[],
   roundCount: number,
   seed: number,
-): Tournament {
-  // Build per-player results and scores
+): TournamentData {
+  // Compute final scores
   const playerScores = new Map<string, number>();
   for (const p of players) {
     playerScores.set(p.id, 0);
   }
 
-  const playerResults = new Map<
-    string,
-    Tournament['players'][number]['results']
-  >();
-  for (const p of players) {
-    playerResults.set(p.id, []);
-  }
-
-  for (const [roundIndex, completedRound] of allRounds.entries()) {
-    const round = roundIndex + 1;
-
-    // Handle pairing byes
-    for (const bye of completedRound.byes) {
-      const results = playerResults.get(bye.player);
-      if (results) {
-        results.push({
-          color: '-',
-          // eslint-disable-next-line unicorn/no-null -- TRF RoundResult requires null for byes
-          opponentId: null,
-          result: 'U',
-          round,
-        });
+  for (const round of allRounds) {
+    for (const game of round.games) {
+      switch (game.result) {
+      case 'white': {
+        playerScores.set(game.white, (playerScores.get(game.white) ?? 0) + 1);
+      
+      break;
       }
-      const score = playerScores.get(bye.player) ?? 0;
-      playerScores.set(bye.player, score + 1);
+      case 'black': {
+        playerScores.set(game.black, (playerScores.get(game.black) ?? 0) + 1);
+      
+      break;
+      }
+      case 'draw': {
+        playerScores.set(game.white, (playerScores.get(game.white) ?? 0) + 0.5);
+        playerScores.set(game.black, (playerScores.get(game.black) ?? 0) + 0.5);
+      
+      break;
+      }
+      // No default
+      }
     }
 
-    for (const game of completedRound.games) {
-      // White result
-      const whiteResults = playerResults.get(game.white);
-      if (whiteResults) {
-        let resultCode: '+' | '-' | '0' | '1' | '=';
-        switch (game.result) {
-        case 'white': {
-          resultCode = 'forfeit' in game && game.forfeit === 'black' ? '+' : '1';
-        
-        break;
-        }
-        case 'black': {
-          resultCode = 'forfeit' in game && game.forfeit === 'white' ? '-' : '0';
-        
-        break;
-        }
-        case 'none': {
-          resultCode = '-';
-        
-        break;
-        }
-        default: {
-          resultCode = '=';
-        }
-        }
-        whiteResults.push({
-          color: 'w',
-          opponentId: Number(game.black),
-          result: resultCode,
-          round,
-        });
-      }
-
-      // Score for white
-      if (game.result === 'white') {
-        const whiteScore = playerScores.get(game.white) ?? 0;
-        playerScores.set(game.white, whiteScore + 1);
-      } else if (game.result === 'draw') {
-        const whiteScore = playerScores.get(game.white) ?? 0;
-        playerScores.set(game.white, whiteScore + 0.5);
-      }
-
-      // Black result
-      const blackResults = playerResults.get(game.black);
-      if (blackResults) {
-        let resultCode: '+' | '-' | '0' | '1' | '=';
-        switch (game.result) {
-        case 'black': {
-          resultCode = 'forfeit' in game && game.forfeit === 'white' ? '+' : '1';
-        
-        break;
-        }
-        case 'white': {
-          resultCode = 'forfeit' in game && game.forfeit === 'black' ? '-' : '0';
-        
-        break;
-        }
-        case 'none': {
-          resultCode = '-';
-        
-        break;
-        }
-        default: {
-          resultCode = '=';
-        }
-        }
-        blackResults.push({
-          color: 'b',
-          opponentId: Number(game.white),
-          result: resultCode,
-          round,
-        });
-      }
-
-      // Score for black
-      if (game.result === 'black') {
-        const blackScore = playerScores.get(game.black) ?? 0;
-        playerScores.set(game.black, blackScore + 1);
-      } else if (game.result === 'draw') {
-        const blackScore = playerScores.get(game.black) ?? 0;
-        playerScores.set(game.black, blackScore + 0.5);
-      }
+    for (const bye of round.byes) {
+      playerScores.set(bye.player, (playerScores.get(bye.player) ?? 0) + 1);
     }
   }
 
-  // Sort players by score (descending) for ranking
+  // Sort for ranking
   const sortedPlayers = [...players].toSorted((a, b) => {
     const scoreA = playerScores.get(a.id) ?? 0;
     const scoreB = playerScores.get(b.id) ?? 0;
     if (scoreB !== scoreA) {
       return scoreB - scoreA;
     }
+
     return Number(a.id) - Number(b.id);
   });
 
@@ -249,20 +166,20 @@ function buildTrfTournament(
     rankMap.set(p.id, index + 1);
   }
 
-  const trfPlayers: Tournament['players'] = players.map((p) => ({
+  const trfPlayers: TournamentPlayer[] = players.map((p) => ({
+    id: p.id,
     name: `Player ${p.id.padStart(3, '0')}`,
-    pairingNumber: Number(p.id),
     points: playerScores.get(p.id) ?? 0,
     rank: rankMap.get(p.id) ?? 0,
     rating: p.rating,
-    results: playerResults.get(p.id) ?? [],
+    startingRank: Number(p.id),
   }));
 
   return {
-    name: `RTG ${seed}`,
+    completedRounds: allRounds,
+    metadata: { name: `RTG ${seed}` },
     players: trfPlayers,
-    rounds: roundCount,
-    version: 'TRF16',
+    totalRounds: roundCount,
   };
 }
 

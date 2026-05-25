@@ -25,7 +25,7 @@ describe('VCL.18: FIDE rating list', () => {
     expect(tournament).not.toBeNull();
 
     const swissPlayers = tournament!.players.map((p) => ({
-      id: String(p.pairingNumber),
+      id: p.id,
       points: 0,
       rank: p.rank,
       rating: p.rating,
