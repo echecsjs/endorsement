@@ -10,35 +10,35 @@ importers:
     dependencies:
       '@echecs/swiss':
         specifier: ^4.0.0
-        version: 4.0.0(@echecs/tournament@3.1.1)
+        version: 4.0.0(@echecs/tournament@3.2.0)
       '@echecs/tournament':
-        specifier: ^3.1.1
-        version: 3.1.1
+        specifier: ^3.2.0
+        version: 3.2.0
       '@echecs/trf':
         specifier: ^4.0.0
         version: 4.0.0
     devDependencies:
       '@echecs/average-rating':
         specifier: ^4.0.0
-        version: 4.0.0(@echecs/tournament@3.1.1)
+        version: 4.0.0(@echecs/tournament@3.2.0)
       '@echecs/buchholz':
         specifier: ^4.0.0
-        version: 4.0.0(@echecs/tournament@3.1.1)
+        version: 4.0.0(@echecs/tournament@3.2.0)
       '@echecs/direct-encounter':
         specifier: ^4.0.0
-        version: 4.0.0(@echecs/tournament@3.1.1)
+        version: 4.0.0(@echecs/tournament@3.2.0)
       '@echecs/koya':
         specifier: ^4.0.0
-        version: 4.0.0(@echecs/tournament@3.1.1)
+        version: 4.0.0(@echecs/tournament@3.2.0)
       '@echecs/number-of-wins':
         specifier: ^4.0.0
-        version: 4.0.0(@echecs/tournament@3.1.1)
+        version: 4.0.0(@echecs/tournament@3.2.0)
       '@echecs/progressive':
         specifier: ^4.0.0
-        version: 4.0.0(@echecs/tournament@3.1.1)
+        version: 4.0.0(@echecs/tournament@3.2.0)
       '@echecs/sonneborn-berger':
         specifier: ^4.0.0
-        version: 4.0.0(@echecs/tournament@3.1.1)
+        version: 4.0.0(@echecs/tournament@3.2.0)
       '@eslint/js':
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.4.0)
@@ -186,10 +186,6 @@ packages:
     engines: {node: '>=22'}
     peerDependencies:
       '@echecs/tournament': ^3.0.0
-
-  '@echecs/tournament@3.1.1':
-    resolution: {integrity: sha512-EIXTR1lqq5umL7ZV849brscdAYb02yS8vZ1WtK1gsfK5Yt/IwGEvINKgCHBbvIP6KzalTBnJVQLmNAp61QqzFg==}
-    engines: {node: '>=22'}
 
   '@echecs/tournament@3.2.0':
     resolution: {integrity: sha512-RTvE07+hW5pDMajqAXm4KiyuHIwjNUeu959FFbxjDaQ/KO68uzfmZmyKNYYpgKPVlq96C/AuHE5LadjG1RQ/lg==}
@@ -1750,39 +1746,37 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@echecs/average-rating@4.0.0(@echecs/tournament@3.1.1)':
+  '@echecs/average-rating@4.0.0(@echecs/tournament@3.2.0)':
     dependencies:
-      '@echecs/tournament': 3.1.1
+      '@echecs/tournament': 3.2.0
 
-  '@echecs/buchholz@4.0.0(@echecs/tournament@3.1.1)':
+  '@echecs/buchholz@4.0.0(@echecs/tournament@3.2.0)':
     dependencies:
-      '@echecs/tournament': 3.1.1
+      '@echecs/tournament': 3.2.0
 
-  '@echecs/direct-encounter@4.0.0(@echecs/tournament@3.1.1)':
+  '@echecs/direct-encounter@4.0.0(@echecs/tournament@3.2.0)':
     dependencies:
-      '@echecs/tournament': 3.1.1
+      '@echecs/tournament': 3.2.0
 
-  '@echecs/koya@4.0.0(@echecs/tournament@3.1.1)':
+  '@echecs/koya@4.0.0(@echecs/tournament@3.2.0)':
     dependencies:
-      '@echecs/tournament': 3.1.1
+      '@echecs/tournament': 3.2.0
 
-  '@echecs/number-of-wins@4.0.0(@echecs/tournament@3.1.1)':
+  '@echecs/number-of-wins@4.0.0(@echecs/tournament@3.2.0)':
     dependencies:
-      '@echecs/tournament': 3.1.1
+      '@echecs/tournament': 3.2.0
 
-  '@echecs/progressive@4.0.0(@echecs/tournament@3.1.1)':
+  '@echecs/progressive@4.0.0(@echecs/tournament@3.2.0)':
     dependencies:
-      '@echecs/tournament': 3.1.1
+      '@echecs/tournament': 3.2.0
 
-  '@echecs/sonneborn-berger@4.0.0(@echecs/tournament@3.1.1)':
+  '@echecs/sonneborn-berger@4.0.0(@echecs/tournament@3.2.0)':
     dependencies:
-      '@echecs/tournament': 3.1.1
+      '@echecs/tournament': 3.2.0
 
-  '@echecs/swiss@4.0.0(@echecs/tournament@3.1.1)':
+  '@echecs/swiss@4.0.0(@echecs/tournament@3.2.0)':
     dependencies:
-      '@echecs/tournament': 3.1.1
-
-  '@echecs/tournament@3.1.1': {}
+      '@echecs/tournament': 3.2.0
 
   '@echecs/tournament@3.2.0': {}
 
