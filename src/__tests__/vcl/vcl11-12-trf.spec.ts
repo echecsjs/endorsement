@@ -1,7 +1,6 @@
 import { parse, stringify } from '@echecs/trf';
 import { describe, expect, it } from 'vitest';
 
-
 import { generate } from '../../generate.js';
 
 describe('VCL.11: TRF16 import', () => {
@@ -67,7 +66,9 @@ describe('VCL.12: TRF16 export', () => {
       const orig = tournament!.players[index]!;
       const rt = reParsed!.players[index]!;
       expect(rt.startingRank).toBe(orig.startingRank);
-      expect(reParsed!.completedRounds).toHaveLength(tournament!.completedRounds.length);
+      expect(reParsed!.completedRounds).toHaveLength(
+        tournament!.completedRounds.length,
+      );
     }
   });
 

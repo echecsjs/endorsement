@@ -1,4 +1,3 @@
-
 import { pair } from '@echecs/swiss';
 import { parse } from '@echecs/trf';
 import { describe, expect, it } from 'vitest';
@@ -6,7 +5,6 @@ import { describe, expect, it } from 'vitest';
 import { generate } from '../../generate.js';
 
 import type { CompletedRound, Game, Player } from '@echecs/swiss';
-
 
 describe('VCL.13: unusual results', () => {
   it('engine handles half-zero results correctly', () => {
@@ -46,7 +44,12 @@ describe('VCL.13: unusual results', () => {
     const round1: CompletedRound = {
       byes: [],
       games: [
-        { black: '2', forfeit: 'both' as const, result: 'none' as const, white: '1' },
+        {
+          black: '2',
+          forfeit: 'both' as const,
+          result: 'none' as const,
+          white: '1',
+        },
         { black: '4', result: 'white' as const, white: '3' },
       ],
     };
