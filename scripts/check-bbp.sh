@@ -70,7 +70,7 @@ for i in $(seq 0 $((N - 1))); do
   output=$($CLI check "$trf_path" 2>&1) || true
 
   # parse the summary line: "result: X/Y rounds perfect, A/B pairings match (Z%)"
-  summary=$(echo "$output" | grep "^result:")
+  summary=$(echo "$output" | grep "^result:" || true)
   if [ -z "$summary" ]; then
     echo "seed $seed ($cfg_label): parse failed"
     crashes=$((crashes + 1))
