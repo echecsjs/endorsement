@@ -72,7 +72,7 @@ for i in $(seq 0 $((N - 1))); do
   # parse the summary line: "result: X/Y rounds perfect, A/B pairings match (Z%)"
   summary=$(echo "$output" | grep "^result:" || true)
   if [ -z "$summary" ]; then
-    echo "seed $seed ($cfg_label): parse failed"
+    echo "seed $seed ($cfg_label): parse failed — $output"
     crashes=$((crashes + 1))
     rm -f "$trf_path"
     continue
@@ -112,4 +112,8 @@ echo "rounds:   $perfect_rounds/$total_rounds perfect"
 echo "pairings: $total_matching/$total_pairings"
 if [ "$failures" -gt 0 ]; then
   echo "failures: $failures seeds with discrepancies"
+fi
+
+if [ "$crashes" -gt 0 ] || [ "$failures" -gt 0 ]; then
+  exit 1
 fi
