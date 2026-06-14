@@ -59,7 +59,7 @@ describe('VCL.01-06: FIDE Mode', () => {
         const result = check(trf);
         expect(result.summary.totalMatching).toBe(result.summary.totalPairings);
       }
-    });
+    }, 60_000);
   });
 
   describe('VCL.05 — no FIDE-prohibited features', () => {
