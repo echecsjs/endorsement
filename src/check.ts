@@ -29,7 +29,7 @@ function trfToSwiss(raw: string): TournamentData | undefined {
   return {
     games: tournament.completedRounds,
     players,
-    totalRounds: tournament.totalRounds,
+    totalRounds: tournament.totalRounds || tournament.completedRounds.length,
   };
 }
 
@@ -71,7 +71,7 @@ function extractAbsentPlayers(raw: string, round: number): Set<string> {
   const absent = new Set<string>();
   for (const bye of completedRound.byes) {
     // Pairing byes ('pairing') are assigned by the algorithm, not pre-assigned
-    if (bye.kind === 'half' || bye.kind === 'full' || bye.kind === 'zero') {
+    if (['full', 'half', 'zero'].includes(bye.kind)) {
       absent.add(bye.player);
     }
   }

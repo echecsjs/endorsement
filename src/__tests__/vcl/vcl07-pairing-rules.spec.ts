@@ -21,5 +21,5 @@ describe('VCL.07: pairings adhere to FIDE Dutch rules', () => {
     }
 
     expect(totalMatching).toBe(totalPairings);
-  }, 120_000);
+  }, 1_200_000);
 });

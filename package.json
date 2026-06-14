@@ -44,7 +44,7 @@
   "homepage": "https://github.com/echecsjs/endorsement#readme",
   "license": "MIT",
   "name": "@echecs/endorsement",
-  "packageManager": "pnpm@10.33.0",
+  "packageManager": "pnpm@11.5.2",
   "private": true,
   "repository": {
     "type": "git",
