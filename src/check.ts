@@ -29,7 +29,7 @@ function trfToSwiss(raw: string): TournamentData | undefined {
   return {
     games: tournament.completedRounds,
     players,
-    totalRounds: tournament.totalRounds,
+    totalRounds: tournament.totalRounds || tournament.completedRounds.length,
   };
 }
 
