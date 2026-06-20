@@ -30,8 +30,10 @@ describe('VCL.08: pairing by pairing numbers, not ratings', () => {
     const result = pair(players, []);
 
     const pairKeys = result.games
-      .map((g) => [g.white, g.black].toSorted().join('-'))
-      .toSorted();
+      .map((g) =>
+        [g.white, g.black].toSorted((a, b) => a.localeCompare(b)).join('-'),
+      )
+      .toSorted((a, b) => a.localeCompare(b));
 
     // S1=[1,2,3] vs S2=[4,5,6] by pairing number
     expect(pairKeys).toEqual(['1-4', '2-5', '3-6']);

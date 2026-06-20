@@ -27,7 +27,9 @@ describe('VCL.13: unusual results', () => {
     expect(result.games.length).toBeGreaterThan(0);
 
     for (const game of result.games) {
-      const pair1 = [game.white, game.black].toSorted().join('-');
+      const pair1 = [game.white, game.black]
+        .toSorted((a, b) => a.localeCompare(b))
+        .join('-');
       expect(pair1).not.toBe('1-3');
       expect(pair1).not.toBe('2-4');
     }
@@ -58,7 +60,9 @@ describe('VCL.13: unusual results', () => {
     expect(result.games.length).toBeGreaterThan(0);
 
     for (const game of result.games) {
-      const pairKey = [game.white, game.black].toSorted().join('-');
+      const pairKey = [game.white, game.black]
+        .toSorted((a, b) => a.localeCompare(b))
+        .join('-');
       expect(pairKey).not.toBe('1-2');
     }
   });
@@ -105,7 +109,9 @@ describe('VCL.14: forfeit results', () => {
     expect(result.games.length).toBeGreaterThan(0);
 
     for (const game of result.games) {
-      const pairKey = [game.white, game.black].toSorted().join('-');
+      const pairKey = [game.white, game.black]
+        .toSorted((a, b) => a.localeCompare(b))
+        .join('-');
       expect(pairKey).not.toBe('1-2');
     }
   });
