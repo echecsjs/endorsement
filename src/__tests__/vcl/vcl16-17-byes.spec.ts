@@ -117,7 +117,9 @@ describe('VCL.17: half-point and full-point byes', () => {
     const tournament = new Tournament(
       { completedRounds: [], players, totalRounds: 5 },
       {
-        onWarning: (message) => warnings.push(message),
+        onWarning: (message) => {
+          warnings.push(message);
+        },
         pairingSystem: fakePairingSystem,
       },
     );

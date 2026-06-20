@@ -106,6 +106,28 @@ function generate(options: GenerateOptions): string {
   return stringify(tournament);
 }
 
+function applyGameResult(
+  scores: Map<string, number>,
+  game: CompletedRound['games'][number],
+): void {
+  switch (game.result) {
+    case 'white': {
+      scores.set(game.white, (scores.get(game.white) ?? 0) + 1);
+      break;
+    }
+    case 'black': {
+      scores.set(game.black, (scores.get(game.black) ?? 0) + 1);
+      break;
+    }
+    case 'draw': {
+      scores.set(game.white, (scores.get(game.white) ?? 0) + 0.5);
+      scores.set(game.black, (scores.get(game.black) ?? 0) + 0.5);
+      break;
+    }
+    // No default
+  }
+}
+
 /**
  * Converts the internal player/game representation into a TournamentData object
  * that @echecs/trf can stringify.
@@ -124,31 +146,7 @@ function buildTrfTournament(
 
   for (const round of allRounds) {
     for (const game of round.games) {
-      switch (game.result) {
-        case 'white': {
-          playerScores.set(game.white, (playerScores.get(game.white) ?? 0) + 1);
-
-          break;
-        }
-        case 'black': {
-          playerScores.set(game.black, (playerScores.get(game.black) ?? 0) + 1);
-
-          break;
-        }
-        case 'draw': {
-          playerScores.set(
-            game.white,
-            (playerScores.get(game.white) ?? 0) + 0.5,
-          );
-          playerScores.set(
-            game.black,
-            (playerScores.get(game.black) ?? 0) + 0.5,
-          );
-
-          break;
-        }
-        // No default
-      }
+      applyGameResult(playerScores, game);
     }
 
     for (const bye of round.byes) {

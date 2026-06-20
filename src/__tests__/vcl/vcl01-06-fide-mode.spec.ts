@@ -34,8 +34,10 @@ describe('VCL.01-06: FIDE Mode', () => {
       // Dutch system splits into S1=[1,2] S2=[3,4], pairs 1v3 and 2v4
       expect(result.games).toHaveLength(2);
       const pairKeys = result.games
-        .map((g) => [g.white, g.black].toSorted().join('-'))
-        .toSorted();
+        .map((g) =>
+          [g.white, g.black].toSorted((a, b) => a.localeCompare(b)).join('-'),
+        )
+        .toSorted((a, b) => a.localeCompare(b));
       expect(pairKeys).toEqual(['1-3', '2-4']);
     });
   });

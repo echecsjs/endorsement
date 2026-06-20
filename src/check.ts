@@ -142,11 +142,13 @@ function check(trfContent: string, options?: CheckOptions): CheckResult {
     }
 
     const expectedSet = new Set(
-      expectedPairs.map(([w, b]) => [w, b].toSorted().join('-')),
+      expectedPairs.map(([w, b]) =>
+        [w, b].toSorted((a, b_) => a.localeCompare(b_)).join('-'),
+      ),
     );
     const actualMap = new Map(
       result.games.map((p) => [
-        [p.white, p.black].toSorted().join('-'),
+        [p.white, p.black].toSorted((a, b) => a.localeCompare(b)).join('-'),
         [p.white, p.black] as [string, string],
       ]),
     );
@@ -165,7 +167,9 @@ function check(trfContent: string, options?: CheckOptions): CheckResult {
     let matching = 0;
 
     for (const expectedPair of expectedPairs) {
-      const key = [expectedPair[0], expectedPair[1]].toSorted().join('-');
+      const key = [expectedPair[0], expectedPair[1]]
+        .toSorted((a, b) => a.localeCompare(b))
+        .join('-');
       if (actualMap.has(key)) {
         matching++;
       } else {
