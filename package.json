@@ -21,7 +21,7 @@
     "@echecs/progressive": "^4.0.0",
     "@echecs/sonneborn-berger": "^4.0.0",
     "@eslint/js": "^10.0.1",
-    "@types/node": "^26.1.0",
+    "@types/node": "^26.1.1",
     "@typescript-eslint/parser": "^8.62.1",
     "@vitest/coverage-v8": "^4.1.10",
     "@vitest/eslint-plugin": "^1.6.21",
