@@ -34,8 +34,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(@echecs/tournament@3.3.0)
       '@echecs/progressive':
-        specifier: ^4.0.0
-        version: 4.0.0(@echecs/tournament@3.3.0)
+        specifier: ^4.1.0
+        version: 4.1.0(@echecs/tournament@3.3.0)
       '@echecs/sonneborn-berger':
         specifier: ^4.0.0
         version: 4.0.0(@echecs/tournament@3.3.0)
@@ -147,8 +147,8 @@ packages:
     peerDependencies:
       '@echecs/tournament': ^3.0.0
 
-  '@echecs/progressive@4.0.0':
-    resolution: {integrity: sha512-WypnmdWxRcAk7gRxwv5RCzZSGvdBUfOc1DUfOY06exNtYCSNppcB7H3DdIijZWxTSFenpmOoY4u5pIXtODrvcw==}
+  '@echecs/progressive@4.1.0':
+    resolution: {integrity: sha512-u6H43DmgX+cOwMH96nv8ADCEQ9aVju/T/fVpN5vT9SAavPvwCFCLMtFRHzP2RHqd8LUvd9q9yz+IkNH78QbyZg==}
     engines: {node: '>=22'}
     peerDependencies:
       '@echecs/tournament': ^3.0.0
@@ -1959,7 +1959,7 @@ snapshots:
     dependencies:
       '@echecs/tournament': 3.3.0
 
-  '@echecs/progressive@4.0.0(@echecs/tournament@3.3.0)':
+  '@echecs/progressive@4.1.0(@echecs/tournament@3.3.0)':
     dependencies:
       '@echecs/tournament': 3.3.0
 
