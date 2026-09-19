@@ -25,8 +25,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(@echecs/tournament@3.3.0)
       '@echecs/direct-encounter':
-        specifier: ^4.0.0
-        version: 4.0.0(@echecs/tournament@3.3.0)
+        specifier: ^4.1.0
+        version: 4.1.0(@echecs/tournament@3.3.0)
       '@echecs/koya':
         specifier: ^4.0.0
         version: 4.0.0(@echecs/tournament@3.3.0)
@@ -129,8 +129,8 @@ packages:
     peerDependencies:
       '@echecs/tournament': ^3.0.0
 
-  '@echecs/direct-encounter@4.0.0':
-    resolution: {integrity: sha512-Y89fgHgJ9emN7JngQVt7/jBe/iKZsQPiC6H0kflKjlIHpyvpMVM88oMCSS5Y83eUtVDV1zYkxlXruwiVf6f0ig==}
+  '@echecs/direct-encounter@4.1.0':
+    resolution: {integrity: sha512-2o09HmV/U2MXn3upgZtOSWm6NthwRN/lmfAISJ+MbZz0tPZLiuZrmLwHWg6f5UomRNi/5We0ap2o6FS1GpbSRQ==}
     engines: {node: '>=22'}
     peerDependencies:
       '@echecs/tournament': ^3.0.0
@@ -1947,7 +1947,7 @@ snapshots:
     dependencies:
       '@echecs/tournament': 3.3.0
 
-  '@echecs/direct-encounter@4.0.0(@echecs/tournament@3.3.0)':
+  '@echecs/direct-encounter@4.1.0(@echecs/tournament@3.3.0)':
     dependencies:
       '@echecs/tournament': 3.3.0
 
