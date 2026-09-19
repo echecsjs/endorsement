@@ -15,7 +15,7 @@
   "devDependencies": {
     "@echecs/average-rating": "^4.0.0",
     "@echecs/buchholz": "^4.0.0",
-    "@echecs/direct-encounter": "^4.0.0",
+    "@echecs/direct-encounter": "^4.1.0",
     "@echecs/koya": "^4.0.0",
     "@echecs/number-of-wins": "^4.0.0",
     "@echecs/progressive": "^4.0.0",
