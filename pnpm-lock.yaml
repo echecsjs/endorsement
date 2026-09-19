@@ -19,8 +19,8 @@ importers:
         version: 4.0.0
     devDependencies:
       '@echecs/average-rating':
-        specifier: ^4.0.0
-        version: 4.0.0(@echecs/tournament@3.3.0)
+        specifier: ^4.1.0
+        version: 4.1.0(@echecs/tournament@3.3.0)
       '@echecs/buchholz':
         specifier: ^4.0.0
         version: 4.0.0(@echecs/tournament@3.3.0)
@@ -117,8 +117,8 @@ packages:
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
 
-  '@echecs/average-rating@4.0.0':
-    resolution: {integrity: sha512-ZaHt4h/V4Sox5zUxb+t7HwGCZMMRaRPgk3ur9ZrhufbsQYeR/9GlNUt9y7UcjwHzb2QSoxEDy1K9Mzh7/uXLxg==}
+  '@echecs/average-rating@4.1.0':
+    resolution: {integrity: sha512-JX0o+fytrUvHZllyb9LAPaaiYXGV1N7VKjQjVE/dEjfAvKCYtm1CgiM0elSNnb5OPF/PqoIbWdpFJiuF3efnmg==}
     engines: {node: '>=22'}
     peerDependencies:
       '@echecs/tournament': ^3.0.0
@@ -1939,7 +1939,7 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@echecs/average-rating@4.0.0(@echecs/tournament@3.3.0)':
+  '@echecs/average-rating@4.1.0(@echecs/tournament@3.3.0)':
     dependencies:
       '@echecs/tournament': 3.3.0
 
