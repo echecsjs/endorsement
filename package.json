@@ -19,7 +19,7 @@
     "@echecs/koya": "^4.1.1",
     "@echecs/number-of-wins": "^4.0.0",
     "@echecs/progressive": "^4.1.0",
-    "@echecs/sonneborn-berger": "^4.0.0",
+    "@echecs/sonneborn-berger": "^4.1.0",
     "@eslint/js": "^10.0.1",
     "@types/node": "^26.5.1",
     "@typescript-eslint/parser": "^8.70.0",
