@@ -22,8 +22,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0(@echecs/tournament@3.3.0)
       '@echecs/buchholz':
-        specifier: ^4.0.0
-        version: 4.0.0(@echecs/tournament@3.3.0)
+        specifier: ^4.1.0
+        version: 4.1.0(@echecs/tournament@3.3.0)
       '@echecs/direct-encounter':
         specifier: ^4.1.0
         version: 4.1.0(@echecs/tournament@3.3.0)
@@ -129,8 +129,8 @@ packages:
     peerDependencies:
       '@echecs/tournament': ^3.0.0
 
-  '@echecs/buchholz@4.0.0':
-    resolution: {integrity: sha512-hnLUfDaJZGRsgN8Jmf0Qub/OfbI48oVu2V+Mn66VCoeyKkjTXsImpC++wzxNnmauxg577T0eAZKXdM05MxBsow==}
+  '@echecs/buchholz@4.1.0':
+    resolution: {integrity: sha512-/iXNY2oPHBuyyYowRaPEjOQegZyYTIPNCmqLdwZE35/oyvb58iVH5bhKVmIsV9swwWs0nmEF4NjXqi+slAz63g==}
     engines: {node: '>=22'}
     peerDependencies:
       '@echecs/tournament': ^3.0.0
@@ -1932,7 +1932,7 @@ snapshots:
     dependencies:
       '@echecs/tournament': 3.3.0
 
-  '@echecs/buchholz@4.0.0(@echecs/tournament@3.3.0)':
+  '@echecs/buchholz@4.1.0(@echecs/tournament@3.3.0)':
     dependencies:
       '@echecs/tournament': 3.3.0
 
