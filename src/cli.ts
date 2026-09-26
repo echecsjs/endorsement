@@ -142,13 +142,14 @@ function runGenerate(arguments_: string[]): void {
       players: { type: 'string' },
       rounds: { type: 'string' },
       seed: { type: 'string' },
+      trf16: { default: false, type: 'boolean' },
     },
   });
 
   if (!values.players || !values.rounds) {
     process.stderr.write('error: --players and --rounds are required\n');
     process.stderr.write(
-      'usage: echecs-endorsement generate --players 40 --rounds 9 [--seed 12345] [-o tournament.trf]\n',
+      'usage: echecs-endorsement generate --players 40 --rounds 9 [--seed 12345] [--trf16] [-o tournament.trf]\n',
     );
     process.exitCode = 2;
     return;
@@ -184,6 +185,10 @@ function runGenerate(arguments_: string[]): void {
     options.seed = seed;
   }
 
+  if (values.trf16) {
+    options.format = 'TRF16';
+  }
+
   if (values.output) {
     options.output = values.output;
   }
@@ -216,7 +221,7 @@ function main(): void {
         'usage: echecs-endorsement <check|generate> [options]\n\n' +
           'commands:\n' +
           '  check     <file.trf> [--rounds 1-5] [--verbose]\n' +
-          '  generate  --players 40 --rounds 9 [--seed 12345] [-o file.trf]\n',
+          '  generate  --players 40 --rounds 9 [--seed 12345] [--trf16] [-o file.trf]\n',
       );
       process.exitCode = command ? 2 : 0;
     }
