@@ -47,6 +47,7 @@
   "name": "@echecs/endorsement",
   "packageManager": "pnpm@11.5.2",
   "private": true,
+  "version": "0.2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/echecsjs/endorsement.git"
