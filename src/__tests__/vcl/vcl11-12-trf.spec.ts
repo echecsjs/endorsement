@@ -83,7 +83,12 @@ describe('VCL.12: TRF16 export', () => {
   });
 
   it('includes XXR round count tag', () => {
-    const trfContent = generate({ players: 10, rounds: 7, seed: 5 });
+    const trfContent = generate({
+      format: 'TRF16',
+      players: 10,
+      rounds: 7,
+      seed: 5,
+    });
     expect(trfContent).toContain('XXR 7');
   });
 });
