@@ -103,7 +103,7 @@ function generate(options: GenerateOptions): string {
   // Build TRF tournament
   const tournament = buildTrfTournament(players, allRounds, roundCount, seed);
 
-  return stringify(tournament);
+  return stringify(tournament, { version: options.format ?? 'TRF26' });
 }
 
 function applyGameResult(

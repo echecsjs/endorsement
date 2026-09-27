@@ -4,6 +4,34 @@ Process diary for FIDE Swiss Software Endorsement of `@echecs/swiss`.
 
 ---
 
+## 2026-09-21
+
+### TRF26 I/O landed (VCL4THP cross-cutting gap #1 closed)
+
+the new FIDE framework (C.02 / VCL4THP) requires the PTC to read TRF26 and the
+RTG to emit it. both directions now work:
+
+- `@echecs/trf` 4.1.0/4.1.1 (echecsjs/trf#152, PRs #153/#159): parse maps
+  tag-240 bye records into `completedRounds[].byes` (they were silently
+  dropped); stringify emits 240 records in TRF26 mode for point byes
+  (full/half/zero — tag 240 has no pairing type), keeping pairing byes as
+  player-line `U` codes; TRF26 emits `142` instead of `XXR`.
+- `@echecs/endorsement`: `check()` reads TRF16 and TRF26 (auto-detected via
+  trf's parse) and parses the document once (helpers now take the parsed
+  structure — prep for standings/tiebreak verification); `generate()` emits
+  TRF26 by default with a `format` option and `--trf16` CLI flag.
+- `check-ours.sh` pins `--trf16`: bbpPairings reads TRF16 only.
+- end-to-end proof: grandmommyscup fixture (249 players, real tournament)
+  round-trips TRF16→parse→stringify-TRF26→parse preserving all 1443 byes and
+  1030 games; odd-player-count generate→check is 100% through the 240/U bye
+  encodings.
+
+found along the way: `check()` had never been exercised with byes — every
+existing test and cross-validation config used even player counts. the TRF16
+path handled them correctly all along; the TRF26 path needed the trf fix.
+
+---
+
 ## 2026-05-04
 
 ### FIDE endorsement test — 0 discrepancies

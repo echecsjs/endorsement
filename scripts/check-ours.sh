@@ -50,7 +50,8 @@ for i in $(seq 0 $((N - 1))); do
   read -r players rounds <<< "${configs[$config_idx]}"
   cfg_label="${players}p/${rounds}r"
 
-  if ! $CLI generate --players "$players" --rounds "$rounds" --seed "$seed" -o "$trf_path" 2>/dev/null; then
+  # bbpPairings reads TRF16 only — --trf16 required regardless of the default format
+  if ! $CLI generate --players "$players" --rounds "$rounds" --seed "$seed" --trf16 -o "$trf_path" 2>/dev/null; then
     echo "seed $seed ($cfg_label): our RTG failed"
     crashes=$((crashes + 1))
     continue

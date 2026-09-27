@@ -1,1 +1,4 @@
-pnpm run format:ci && pnpm run lint:ci && pnpm run test:coverage
+# CI (validate.yml, test.yml) runs the full suite with coverage on every PR —
+# the endorsement test suite includes heavy cross-validation, so the local
+# pre-push gate stays light (format + lint) to keep pushes fast.
+pnpm run format:ci && pnpm run lint:ci

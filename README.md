@@ -14,8 +14,8 @@ npm install @echecs/endorsement
 
 ### `check` — Free Pairings Checker
 
-Reads a TRF16 file, replays each round through the Dutch pairing engine, and
-compares results against the stored pairings.
+Reads a TRF16 or TRF26 file (auto-detected), replays each round through the
+Dutch pairing engine, and compares results against the stored pairings.
 
 ```bash
 echecs-endorsement check tournament.trf
@@ -25,7 +25,7 @@ echecs-endorsement check tournament.trf --verbose
 
 **Options:**
 
-- `<file.trf>` — path to TRF16 file (required)
+- `<file.trf>` — path to TRF16 or TRF26 file (required)
 - `--rounds <range>` — check specific rounds (e.g. `3`, `1-5`, `2,4,7`)
 - `--verbose` — show each individual pairing comparison
 
@@ -37,12 +37,13 @@ echecs-endorsement check tournament.trf --verbose
 
 ### `generate` — Random Tournament Generator
 
-Generates a simulated tournament and outputs a TRF16 file.
+Generates a simulated tournament and outputs a TRF26 file (`--trf16` for the
+legacy format, e.g. for bbpPairings interop).
 
 ```bash
 echecs-endorsement generate --players 40 --rounds 9
 echecs-endorsement generate --players 40 --rounds 9 --seed 12345
-echecs-endorsement generate --players 40 --rounds 9 --seed 12345 -o tournament.trf
+echecs-endorsement generate --players 40 --rounds 9 --seed 12345 --trf16 -o tournament.trf
 ```
 
 **Options:**
@@ -50,6 +51,7 @@ echecs-endorsement generate --players 40 --rounds 9 --seed 12345 -o tournament.t
 - `--players <n>` — number of players (required)
 - `--rounds <n>` — number of rounds (required)
 - `--seed <n>` — PRNG seed for deterministic generation
+- `--trf16` — emit TRF16 instead of the default TRF26
 - `-o <path>` — output file path (defaults to stdout)
 
 ## API
@@ -59,10 +61,10 @@ The package also exports its core functions for programmatic use:
 ```typescript
 import { check, generate } from '@echecs/endorsement';
 
-// Generate a tournament
+// Generate a tournament (TRF26 by default)
 const trf = generate({ players: 40, rounds: 9, seed: 42 });
 
-// Check a TRF file
+// Check a TRF file (TRF16 or TRF26, auto-detected)
 const result = check(trf);
 console.log(result.summary);
 // { perfectRounds: 9, totalRounds: 9, totalMatching: 180, totalPairings: 180 }
@@ -72,7 +74,7 @@ console.log(result.summary);
 
 Parses TRF content and compares each round's pairings against the Dutch engine.
 
-- `trfContent: string` — raw TRF16 file content
+- `trfContent: string` — raw TRF16 or TRF26 file content
 - `options.rounds?: number[]` — specific rounds to check
 - `options.verbose?: boolean` — include detailed pairing comparisons
 
@@ -80,11 +82,12 @@ Returns a `CheckResult` with per-round reports and summary statistics.
 
 ### `generate(options)`
 
-Creates a simulated tournament and returns TRF16 content.
+Creates a simulated tournament and returns TRF26 content by default.
 
 - `options.players: number` — number of players
 - `options.rounds: number` — number of rounds
 - `options.seed?: number` — PRNG seed for reproducibility
+- `options.format?: 'TRF16' | 'TRF26'` — output format (default `'TRF26'`)
 - `options.output?: string` — output file path
 
 ### `createPrng(seed)`
@@ -95,16 +98,16 @@ Returns a seeded PRNG function (mulberry32) producing floats in `[0, 1)`.
 
 Returns the FIDE expected score for a given rating difference.
 
-### `trfToSwiss(raw)`
+### `trfToSwiss(tournament)`
 
-Converts TRF content into the `Player[]` + `Game[][]` structure expected by
-`pair()`.
+Converts parsed TRF content (the object returned by `parse()` from
+`@echecs/trf`) into the `Player[]` + `Game[][]` structure expected by `pair()`.
 
-### `extractRoundPairings(raw, round)`
+### `extractRoundPairings(tournament, round)`
 
-Extracts expected pairings for a specific round from TRF data.
+Extracts expected pairings for a specific round from parsed TRF data.
 
-### `extractAbsentPlayers(raw, round)`
+### `extractAbsentPlayers(tournament, round)`
 
 Finds players with pre-assigned absences for a round.
 

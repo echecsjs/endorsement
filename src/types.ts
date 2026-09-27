@@ -1,4 +1,5 @@
 import type { CompletedRound, Player } from '@echecs/swiss';
+import type { Version } from '@echecs/trf';
 
 interface CheckOptions {
   rounds?: number[];
@@ -21,6 +22,7 @@ interface Discrepancy {
 }
 
 interface GenerateOptions {
+  format?: Version;
   output?: string;
   players: number;
   rounds: number;

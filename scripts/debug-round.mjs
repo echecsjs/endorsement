@@ -1,4 +1,5 @@
 import { pair } from '@echecs/swiss';
+import { parse } from '@echecs/trf';
 import { readFileSync } from 'node:fs';
 
 import {
@@ -10,21 +11,22 @@ import {
 const raw = readFileSync(process.argv[2], 'utf8').replaceAll(/\r\n?/g, '\n');
 const round = Number(process.argv[3]);
 
-const data = trfToSwiss(raw);
+const tournament = parse(raw);
+const data = trfToSwiss(tournament);
 if (!data) {
   console.log('parse failed');
   process.exit(1);
 }
 
 const priorGames = data.games.slice(0, round - 1);
-const absent = extractAbsentPlayers(raw, round);
+const absent = extractAbsentPlayers(tournament, round);
 const roundPlayers =
   absent.size > 0
     ? data.players.filter((p) => !absent.has(p.id))
     : data.players;
 
 // get expected pairings
-const expected = extractRoundPairings(raw, round);
+const expected = extractRoundPairings(tournament, round);
 const expectedSet = new Set(
   expected.map(([w, b]) => [w, b].toSorted().join('-')),
 );
