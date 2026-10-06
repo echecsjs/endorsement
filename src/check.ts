@@ -9,12 +9,13 @@ import type {
 } from './types.js';
 import type { Player } from '@echecs/swiss';
 
+type ParsedTrf = NonNullable<ReturnType<typeof parse>>;
+
 /**
  * Converts a parsed TRF tournament into the Player[] + CompletedRound[] structure
  * that pair() expects.
  */
-function trfToSwiss(raw: string): TournamentData | undefined {
-  const tournament = parse(raw);
+function trfToSwiss(tournament: ParsedTrf | null): TournamentData | undefined {
   if (!tournament) {
     return undefined;
   }
@@ -34,15 +35,13 @@ function trfToSwiss(raw: string): TournamentData | undefined {
 }
 
 /**
- * Extracts expected pairings for a round from TRF data. Returns [white, black][]
- * pairs excluding byes.
+ * Extracts expected pairings for a round from parsed TRF data. Returns
+ * [white, black][] pairs excluding byes.
  */
-function extractRoundPairings(raw: string, round: number): [string, string][] {
-  const tournament = parse(raw);
-  if (!tournament) {
-    return [];
-  }
-
+function extractRoundPairings(
+  tournament: ParsedTrf,
+  round: number,
+): [string, string][] {
   const completedRound = tournament.completedRounds[round - 1];
   if (!completedRound) {
     return [];
@@ -57,12 +56,10 @@ function extractRoundPairings(raw: string, round: number): [string, string][] {
  * Finds players with pre-assigned absences (H/F/Z byes) to exclude from
  * pairing input. 'pairing' byes are assigned by the algorithm, not pre-assigned.
  */
-function extractAbsentPlayers(raw: string, round: number): Set<string> {
-  const tournament = parse(raw);
-  if (!tournament) {
-    return new Set();
-  }
-
+function extractAbsentPlayers(
+  tournament: ParsedTrf,
+  round: number,
+): Set<string> {
   const completedRound = tournament.completedRounds[round - 1];
   if (!completedRound) {
     return new Set();
@@ -84,8 +81,9 @@ function extractAbsentPlayers(raw: string, round: number): Set<string> {
  * pair(), compare against expected. Returns structured results.
  */
 function check(trfContent: string, options?: CheckOptions): CheckResult {
-  const data = trfToSwiss(trfContent);
-  if (!data) {
+  const tournament = parse(trfContent);
+  const data = trfToSwiss(tournament);
+  if (!tournament || !data) {
     return {
       rounds: [],
       summary: {
@@ -105,7 +103,7 @@ function check(trfContent: string, options?: CheckOptions): CheckResult {
 
   for (const round of roundsToCheck) {
     const priorGames = data.games.slice(0, round - 1);
-    const expectedPairs = extractRoundPairings(trfContent, round);
+    const expectedPairs = extractRoundPairings(tournament, round);
 
     if (expectedPairs.length === 0) {
       reports.push({
@@ -117,7 +115,7 @@ function check(trfContent: string, options?: CheckOptions): CheckResult {
       continue;
     }
 
-    const absentIds = extractAbsentPlayers(trfContent, round);
+    const absentIds = extractAbsentPlayers(tournament, round);
     const roundPlayers =
       absentIds.size > 0
         ? data.players.filter((p) => !absentIds.has(p.id))

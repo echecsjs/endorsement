@@ -47,8 +47,9 @@ describe('generate then check (integration)', () => {
     expect(playerLines).toHaveLength(40);
   });
 
-  it('includes XXR round count tag', () => {
+  it('includes XXR round count tag in TRF16 format', () => {
     const trfContent = generate({
+      format: 'TRF16',
       players: 10,
       rounds: 5,
       seed: 7,
@@ -66,5 +67,35 @@ describe('generate then check (integration)', () => {
     const result = check(trfContent, { rounds: [1, 3] });
     expect(result.summary.totalRounds).toBe(2);
     expect(result.summary.perfectRounds).toBe(2);
+  });
+});
+
+describe('generate — output format', () => {
+  it('emits TRF26 by default (142 header, no XXR)', () => {
+    const output = generate({ players: 10, rounds: 3, seed: 5 });
+    expect(output).toContain('142');
+    expect(output).not.toContain('XXR');
+  });
+
+  it('emits pairing byes as player-line U codes in TRF26 (odd player count)', () => {
+    const output = generate({ players: 11, rounds: 5, seed: 9 });
+    expect(output).toMatch(/0000 - U/);
+  });
+
+  it('emits TRF16 when format is TRF16', () => {
+    const output = generate({
+      format: 'TRF16',
+      players: 10,
+      rounds: 3,
+      seed: 5,
+    });
+    expect(output).toContain('XXR');
+    expect(output).not.toMatch(/^240 /m);
+  });
+
+  it('TRF26 output round-trips through check with perfect rounds', () => {
+    const output = generate({ players: 11, rounds: 5, seed: 9 });
+    const result = check(output);
+    expect(result.summary.perfectRounds).toBe(result.summary.totalRounds);
   });
 });
