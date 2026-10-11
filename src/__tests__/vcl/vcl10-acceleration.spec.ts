@@ -4,8 +4,8 @@ import { describe, expect, it } from 'vitest';
 
 import type { Player } from '@echecs/tournament';
 
-const makePlayers = (count: number): Player[] =>
-  Array.from({ length: count }, (_, index) => ({
+const makePlayers = (): Player[] =>
+  Array.from({ length: 20 }, (_, index) => ({
     id: String(index + 1),
     points: 0,
     rank: index + 1,
@@ -14,7 +14,7 @@ const makePlayers = (count: number): Player[] =>
 
 describe('VCL.10: FIDE acceleration systems (Baku)', () => {
   it('bakuAcceleration is available and returns an AccelerationMethod', () => {
-    const players = makePlayers(20);
+    const players = makePlayers();
     const acceleration = bakuAcceleration(players);
 
     expect(acceleration).toBeDefined();
@@ -22,7 +22,7 @@ describe('VCL.10: FIDE acceleration systems (Baku)', () => {
   });
 
   it('Tournament accepts acceleration option without error', () => {
-    const players = makePlayers(20);
+    const players = makePlayers();
 
     const tournament = new Tournament(
       { completedRounds: [], players, totalRounds: 9 },
@@ -36,7 +36,7 @@ describe('VCL.10: FIDE acceleration systems (Baku)', () => {
   });
 
   it('acceleration applies virtual points in early rounds', () => {
-    const players = makePlayers(20);
+    const players = makePlayers();
     const acceleration = bakuAcceleration(players);
 
     const vp = acceleration.virtualPoints(players[0]!, 1, 9);
@@ -44,7 +44,7 @@ describe('VCL.10: FIDE acceleration systems (Baku)', () => {
   });
 
   it('acceleration stops applying in later rounds', () => {
-    const players = makePlayers(20);
+    const players = makePlayers();
     const acceleration = bakuAcceleration(players);
 
     const vp = acceleration.virtualPoints(players[0]!, 9, 9);
